@@ -4,12 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Épreuve 6 — Romain Dieunon</title>
-    <meta name="description" content="Épreuve E6 du BTS SIO — Parcours de professionnalisation.">
+    <meta name="description" content="Épreuve E6 du BTS SIO — Projets personnels.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230ea5e9'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' fill='white' font-family='Inter,sans-serif' font-size='14' font-weight='700'%3ERD%3C/text%3E%3C/svg%3E">
+    <style>
+        .project-duo {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 1rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .project-big-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        .project-big-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+        .project-big-card .project-number {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+        }
+        .project-big-card h3 {
+            margin: 0.25rem 0 0;
+            font-size: 1.35rem;
+        }
+        .project-big-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        .project-big-card .btn {
+            margin-top: 0.75rem;
+        }
+        @media (max-width: 760px) {
+            .project-duo { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
 
@@ -23,7 +80,7 @@
             <li><a href="bts-sio.html">BTS SIO</a></li>
             <li><a href="entreprise.html">Entreprise</a></li>
             <li><a href="veille.html">Veille</a></li>
-            <li><a href="epreuve5.html">Épreuve 5</a></li>
+            <li><a href="epreuve5.html">Procédures</a></li>
             <li><a href="epreuve6.html" class="active">Épreuve 6</a></li>
             <li><a href="contact.html">Contact</a></li>
         </ul>
@@ -33,8 +90,8 @@
 <section class="page-hero">
     <div class="container">
         <p class="breadcrumb"><a href="index.html">Accueil</a> / Épreuve 6</p>
-        <h1>Épreuve E6</h1>
-        <p>Parcours de professionnalisation — tableau de synthèse et projets personnels.</p>
+        <h1>Épreuve E6 — Projets</h1>
+        <p>Présentation des deux projets personnels réalisés dans le cadre de l'épreuve E6.</p>
     </div>
 </section>
 
@@ -44,68 +101,56 @@
         <div class="content-block fade-in">
             <h3>À propos de l'épreuve E6</h3>
             <p>
-                L'épreuve E6 — <strong>Parcours de professionnalisation</strong> — évalue la capacité du candidat à prendre du recul sur son parcours en entreprise et à mettre en valeur les compétences développées. Elle s'appuie sur un <strong>tableau de synthèse</strong> et sur la présentation orale de projets représentatifs.
+                L'épreuve E6 — <strong>Parcours de professionnalisation</strong> — évalue la capacité du candidat
+                à prendre du recul sur son parcours et à mettre en valeur les compétences développées à travers
+                des projets représentatifs.
             </p>
-
-            <h3>Compétences évaluées</h3>
-            <ul>
-                <li>S'informer sur l'évolution du métier et de ses technologies</li>
-                <li>Gérer son identité professionnelle</li>
-                <li>Développer son projet professionnel</li>
-                <li>Mettre en valeur son parcours et ses réalisations</li>
-            </ul>
+            <p>
+                Vous trouverez ci-dessous mes <strong>deux projets personnels</strong>. Cliquez sur l'un des
+                projets pour accéder à sa fiche complète (contexte, objectifs, architecture, mise en œuvre
+                et bilan).
+            </p>
         </div>
     </div>
 </section>
 
-<!-- TABLEAU DE SYNTHÈSE -->
+<!-- PROJETS -->
 <section class="section-alt">
     <div class="container">
         <div class="section-header fade-in">
-            <p class="section-kicker">Tableau de synthèse</p>
-            <h2>Mon parcours en un coup d'œil</h2>
-            <p>Synthèse des missions et projets réalisés en alternance et en formation.</p>
+            <p class="section-kicker">Mes projets</p>
+            <h2>Projet 1 &amp; Projet 2</h2>
+            <p>Sélectionnez un projet pour consulter la procédure détaillée.</p>
         </div>
-        <div class="table-wrap fade-in">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Projet / Mission</th>
-                        <th>Contexte</th>
-                        <th>Compétences mobilisées</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Raccordements FTTH particuliers</strong></td>
-                        <td>Circet — 6 mois</td>
-                        <td>Fibre optique · Terrain · SAV</td>
-                        <td><span class="badge badge-success">Terminé</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Raccordements FTTO entreprises</strong></td>
-                        <td>Circet — 1 an et demi</td>
-                        <td>Fibre optique · Soudure · Relation client</td>
-                        <td><span class="badge badge-success">Terminé</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Traitement des malfaçons et audits</strong></td>
-                        <td>Circet — Bureau</td>
-                        <td>Organisation · Qualité · Gestion d'équipe</td>
-                        <td><span class="badge badge-success">Terminé</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Projet personnel à compléter</strong></td>
-                        <td>Formation</td>
-                        <td>À compléter</td>
-                        <td><span class="badge badge-primary">En cours</span></td>
-                    </tr>
-                </tbody>
-            </table>
+
+        <div class="project-duo">
+
+            <div class="project-big-card fade-in">
+                <div class="project-number">1</div>
+                <span class="project-type">Projet 1</span>
+                <h3>Titre du projet 1</h3>
+                <p>Courte description : contexte, objectifs et technologies mobilisées. Le contenu détaillé sera ajouté dès l'envoi des documents.</p>
+                <a href="projet1.html" class="btn btn-primary">
+                    Voir la procédure
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+
+            <div class="project-big-card fade-in">
+                <div class="project-number">2</div>
+                <span class="project-type">Projet 2</span>
+                <h3>Titre du projet 2</h3>
+                <p>Courte description : contexte, objectifs et technologies mobilisées. Le contenu détaillé sera ajouté dès l'envoi des documents.</p>
+                <a href="projet2.html" class="btn btn-primary">
+                    Voir la procédure
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+
         </div>
-        <p style="text-align:center; color: var(--text-muted); margin-top: 2rem; font-style: italic;">
-            Page en cours de construction — tu pourras détailler chaque projet avec ses enjeux, les outils utilisés et les résultats obtenus.
+
+        <p style="text-align:center; color: var(--text-muted); margin-top: 2.5rem; font-style: italic;">
+            Les deux projets (≈ 60 pages chacun) seront intégrés dès réception depuis Word ou OneNote.
         </p>
     </div>
 </section>
