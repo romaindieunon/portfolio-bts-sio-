@@ -1,0 +1,17 @@
+# macOS / Windows / Linux
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Fichiers temporaires
+*.log
+*.tmp
+test.txt

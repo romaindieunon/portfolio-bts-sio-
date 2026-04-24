@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projets — Romain Dieunon</title>
+    <meta name="description" content="Tableau de synthèse et fiches détaillées des projets de Romain Dieunon pour le BTS SIO SISR.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230ea5e9'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' fill='white' font-family='Inter,sans-serif' font-size='14' font-weight='700'%3ERD%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="container nav-wrap">
+        <a href="index.html" class="logo"><span class="logo-dot"></span>Romain Dieunon</a>
+        <button class="nav-toggle" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="apropos.html">À propos</a></li>
+            <li><a href="entreprise.html">Entreprise</a></li>
+            <li><a href="projets.html" class="active">Projets</a></li>
+            <li><a href="veille.html">Veille</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="container">
+        <p class="breadcrumb"><a href="index.html">Accueil</a> / Projets</p>
+        <h1>Mes projets</h1>
+        <p>Synthèse des projets réalisés en formation et en entreprise, classés par domaine technique.</p>
+    </div>
+</section>
+
+<!-- TABLEAU DE SYNTHÈSE -->
+<section>
+    <div class="container">
+        <div class="section-header fade-in">
+            <p class="section-kicker">Vue d'ensemble</p>
+            <h2>Tableau de synthèse</h2>
+            <p>Les projets importants en un coup d'œil. Cliquez sur un nom pour voir la fiche détaillée.</p>
+        </div>
+        <div class="table-wrap fade-in">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Projet</th>
+                        <th>Contexte</th>
+                        <th>Compétences</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#projet-ad"><strong>Déploiement Active Directory</strong></a></td>
+                        <td>Formation</td>
+                        <td>Systèmes · GPO</td>
+                        <td><span class="badge badge-success">Terminé</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#projet-vlan"><strong>Segmentation réseau VLAN</strong></a></td>
+                        <td>Formation</td>
+                        <td>Réseau · Cisco</td>
+                        <td><span class="badge badge-success">Terminé</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#projet-pfsense"><strong>Pare-feu pfSense & VPN</strong></a></td>
+                        <td>Entreprise</td>
+                        <td>Sécurité · Réseau</td>
+                        <td><span class="badge badge-success">Terminé</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#projet-serveur"><strong>Serveur web Debian</strong></a></td>
+                        <td>Formation</td>
+                        <td>Linux · Web</td>
+                        <td><span class="badge badge-success">Terminé</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#projet-virtualisation"><strong>Maquette virtualisée Proxmox</strong></a></td>
+                        <td>Personnel</td>
+                        <td>Virtualisation</td>
+                        <td><span class="badge badge-primary">En cours</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#projet-supervision"><strong>Supervision avec Zabbix</strong></a></td>
+                        <td>Entreprise</td>
+                        <td>Supervision · Linux</td>
+                        <td><span class="badge badge-warning">À venir</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- PROJET : AD -->
+<section id="projet-ad" class="section-alt">
+    <div class="container">
+        <div class="content-block fade-in">
+            <img src="assets/projets/ad.svg" alt="Schéma Active Directory" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+            <span class="project-type">Projet systèmes</span>
+            <h2 style="margin: 0.25rem 0 1rem;">Déploiement d'un Active Directory</h2>
+
+            <h3>Contexte</h3>
+            <p>
+                Dans le cadre d'un atelier de BTS SIO, nous devions mettre en place un domaine Active Directory pour une PME fictive de 30 postes, avec une structuration par service (commercial, comptabilité, production) et des stratégies de sécurité différenciées.
+            </p>
+
+            <h3>Objectifs</h3>
+            <ul>
+                <li>Déployer un contrôleur de domaine sous Windows Server 2022</li>
+                <li>Créer une arborescence d'unités d'organisation (OU)</li>
+                <li>Mettre en place des GPO adaptées à chaque service</li>
+                <li>Joindre des postes clients Windows 11 au domaine</li>
+            </ul>
+
+            <h3>Outils & technologies</h3>
+            <div class="skill-tags">
+                <span class="tag">Windows Server 2022</span>
+                <span class="tag">Active Directory DS</span>
+                <span class="tag">DNS</span>
+                <span class="tag">GPO</span>
+                <span class="tag">VMware Workstation</span>
+            </div>
+
+            <h3 style="margin-top: 1.5rem;">Déroulement</h3>
+            <ol style="margin-left: 1.25rem;">
+                <li>Installation et promotion du serveur en contrôleur de domaine</li>
+                <li>Création des OU (Services, Utilisateurs, Ordinateurs)</li>
+                <li>Création des utilisateurs et groupes de sécurité</li>
+                <li>Déploiement de GPO : verrouillage de session, mappage de lecteurs réseau, fond d'écran</li>
+                <li>Intégration de postes clients et tests</li>
+            </ol>
+
+            <h3>Résultats & compétences acquises</h3>
+            <p>
+                Le domaine est fonctionnel, les utilisateurs reçoivent les bonnes stratégies. J'ai consolidé ma maîtrise des concepts AD (forêt, domaine, OU, GPO) et gagné en méthode sur la documentation des configurations.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- PROJET : VLAN -->
+<section id="projet-vlan">
+    <div class="container">
+        <div class="content-block fade-in">
+            <img src="assets/projets/reseau.svg" alt="Schéma segmentation VLAN" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+            <span class="project-type">Projet réseau</span>
+            <h2 style="margin: 0.25rem 0 1rem;">Segmentation réseau en VLANs</h2>
+
+            <h3>Contexte</h3>
+            <p>
+                Objectif : isoler les flux entre les différents services (administration, production, invités) d'une entreprise fictive grâce à la technologie VLAN, tout en permettant l'inter-VLAN routing pour les flux autorisés.
+            </p>
+
+            <h3>Objectifs</h3>
+            <ul>
+                <li>Créer plusieurs VLANs sur des switches Cisco</li>
+                <li>Configurer les ports en mode access / trunk</li>
+                <li>Mettre en place un routeur inter-VLAN avec ACL</li>
+                <li>Tester la connectivité et les restrictions</li>
+            </ul>
+
+            <h3>Outils & technologies</h3>
+            <div class="skill-tags">
+                <span class="tag">Cisco IOS</span>
+                <span class="tag">Packet Tracer</span>
+                <span class="tag">802.1Q</span>
+                <span class="tag">ACL</span>
+            </div>
+
+            <h3 style="margin-top: 1.5rem;">Résultats & compétences acquises</h3>
+            <p>
+                La séparation des flux est opérationnelle. J'ai appris à concevoir un plan d'adressage clair, à configurer des trunks 802.1Q, et à appliquer des listes de contrôle d'accès pour sécuriser les échanges entre VLANs.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- PROJET : PFSENSE -->
+<section id="projet-pfsense" class="section-alt">
+    <div class="container">
+        <div class="content-block fade-in">
+            <img src="assets/projets/securite.svg" alt="Pare-feu pfSense" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+            <span class="project-type">Projet sécurité</span>
+            <h2 style="margin: 0.25rem 0 1rem;">Pare-feu pfSense et accès VPN</h2>
+
+            <h3>Contexte</h3>
+            <p>
+                Dans mon entreprise de stage, j'ai participé à la mise en place d'une passerelle pfSense pour filtrer le trafic Internet et offrir un accès VPN sécurisé aux collaborateurs en télétravail.
+            </p>
+
+            <h3>Objectifs</h3>
+            <ul>
+                <li>Installer et configurer pfSense en machine virtuelle</li>
+                <li>Définir les règles de pare-feu (LAN / WAN / DMZ)</li>
+                <li>Déployer un serveur OpenVPN avec authentification par certificat</li>
+                <li>Documenter la procédure pour les utilisateurs</li>
+            </ul>
+
+            <h3>Outils & technologies</h3>
+            <div class="skill-tags">
+                <span class="tag">pfSense</span>
+                <span class="tag">OpenVPN</span>
+                <span class="tag">Certificats X.509</span>
+                <span class="tag">Proxmox</span>
+            </div>
+
+            <h3 style="margin-top: 1.5rem;">Résultats & compétences acquises</h3>
+            <p>
+                Le VPN est déployé en production et utilisé par plusieurs collaborateurs. J'ai consolidé ma compréhension du filtrage réseau et j'ai appris à rédiger une documentation claire pour des utilisateurs non techniques.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- PROJET : SERVEUR WEB -->
+<section id="projet-serveur">
+    <div class="container">
+        <div class="content-block fade-in">
+            <img src="assets/projets/serveur.svg" alt="Serveur Debian" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+            <span class="project-type">Projet Linux</span>
+            <h2 style="margin: 0.25rem 0 1rem;">Serveur web Debian (LAMP)</h2>
+
+            <h3>Contexte</h3>
+            <p>
+                Déploiement d'un serveur web Debian hébergeant un site interne pour une entreprise fictive, avec base de données MariaDB et sauvegardes automatisées.
+            </p>
+
+            <h3>Objectifs</h3>
+            <ul>
+                <li>Installer Debian 12 sur une VM</li>
+                <li>Installer et configurer Apache2, PHP et MariaDB</li>
+                <li>Mettre en place un virtual host HTTPS avec Let's Encrypt</li>
+                <li>Planifier une sauvegarde quotidienne via cron</li>
+            </ul>
+
+            <h3>Outils & technologies</h3>
+            <div class="skill-tags">
+                <span class="tag">Debian 12</span>
+                <span class="tag">Apache2</span>
+                <span class="tag">MariaDB</span>
+                <span class="tag">Bash / cron</span>
+                <span class="tag">Let's Encrypt</span>
+            </div>
+
+            <h3 style="margin-top: 1.5rem;">Résultats & compétences acquises</h3>
+            <p>
+                Le site est accessible en HTTPS et les sauvegardes tournent sans intervention. J'ai progressé sur l'administration Linux (services systemd, permissions, pare-feu ufw) et l'écriture de scripts Bash robustes.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- PROJET : VIRTUALISATION -->
+<section id="projet-virtualisation" class="section-alt">
+    <div class="container">
+        <div class="content-block fade-in">
+            <img src="assets/projets/virtualisation.svg" alt="Virtualisation Proxmox" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+            <span class="project-type">Projet personnel</span>
+            <h2 style="margin: 0.25rem 0 1rem;">Maquette virtualisée sur Proxmox</h2>
+
+            <h3>Contexte</h3>
+            <p>
+                Pour m'entraîner à la maison, j'ai monté un homelab avec Proxmox VE sur un serveur reconditionné. Il me sert à reproduire rapidement les architectures vues en cours et à tester de nouvelles technos.
+            </p>
+
+            <h3>Objectifs</h3>
+            <ul>
+                <li>Installer Proxmox VE et configurer le stockage</li>
+                <li>Déployer plusieurs VMs (Windows, Debian, pfSense)</li>
+                <li>Créer des conteneurs LXC pour des services légers</li>
+                <li>Automatiser les sauvegardes des VMs</li>
+            </ul>
+
+            <h3>Outils & technologies</h3>
+            <div class="skill-tags">
+                <span class="tag">Proxmox VE</span>
+                <span class="tag">LXC</span>
+                <span class="tag">KVM/QEMU</span>
+                <span class="tag">ZFS</span>
+            </div>
+
+            <h3 style="margin-top: 1.5rem;">Résultats & compétences acquises</h3>
+            <p>
+                Le laboratoire héberge en permanence une dizaine de machines que je peux cloner ou redémarrer en un clic. Cela m'a rendu autonome pour tester rapidement des configurations.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- PROJET : SUPERVISION -->
+<section id="projet-supervision">
+    <div class="container">
+        <div class="content-block fade-in">
+            <img src="assets/projets/supervision.svg" alt="Supervision Zabbix" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+            <span class="project-type">Projet supervision</span>
+            <h2 style="margin: 0.25rem 0 1rem;">Mise en place d'une supervision Zabbix</h2>
+
+            <h3>Contexte</h3>
+            <p>
+                Projet à venir chez mon entreprise d'accueil : installer une solution de supervision pour surveiller en temps réel les serveurs, les services et les équipements réseau.
+            </p>
+
+            <h3>Objectifs</h3>
+            <ul>
+                <li>Installer Zabbix Server sur Debian</li>
+                <li>Configurer les agents sur les machines à superviser</li>
+                <li>Créer des tableaux de bord et des alertes par e-mail</li>
+                <li>Rédiger une procédure d'astreinte</li>
+            </ul>
+
+            <h3>Outils & technologies</h3>
+            <div class="skill-tags">
+                <span class="tag">Zabbix</span>
+                <span class="tag">SNMP</span>
+                <span class="tag">Debian</span>
+                <span class="tag">Alertes mail</span>
+            </div>
+
+            <h3 style="margin-top: 1.5rem;">Résultats attendus</h3>
+            <p>
+                Un système centralisé permettant de détecter les incidents avant qu'ils n'impactent les utilisateurs. Ce projet sera documenté et présenté à l'équipe.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="logo" style="color:white; margin-bottom: 0.75rem;"><span class="logo-dot"></span>Romain Dieunon</div>
+                <p style="color:#94a3b8; font-size: 0.9rem;">Portfolio BTS SIO SISR — Parcours, projets et veille technologique.</p>
+                <div class="socials">
+                    <a href="#" class="social-link" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.063 2.063 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+                    <a href="mailto:romaindieunon26@gmail.com" class="social-link" aria-label="Email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+                    <a href="#" class="social-link" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.38 7.86 10.9.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.38-3.87-1.38-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.71 1.25 3.37.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.67 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.17.92-.26 1.9-.38 2.88-.39.98.01 1.96.13 2.88.39 2.2-1.48 3.16-1.17 3.16-1.17.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.4-2.7 5.37-5.26 5.66.41.35.78 1.05.78 2.12v3.14c0 .31.21.68.8.56C20.22 21.38 23.5 17.08 23.5 12 23.5 5.73 18.27.5 12 .5z"/></svg></a>
+                </div>
+            </div>
+            <div>
+                <h4>Navigation</h4>
+                <a href="index.html">Accueil</a>
+                <a href="apropos.html">À propos</a>
+                <a href="projets.html">Projets</a>
+                <a href="veille.html">Veille</a>
+            </div>
+            <div>
+                <h4>Contact</h4>
+                <a href="mailto:romaindieunon26@gmail.com">romaindieunon26@gmail.com</a>
+                <a href="contact.html">Formulaire</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © <span id="year"></span> Romain Dieunon — Portfolio BTS SIO. Tous droits réservés.
+        </div>
+    </div>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>

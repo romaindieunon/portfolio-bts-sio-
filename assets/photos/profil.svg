@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#c7d2fe"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <circle cx="200" cy="155" r="68" fill="#0ea5e9" opacity="0.25"/>
+  <circle cx="200" cy="155" r="55" fill="#0ea5e9"/>
+  <path d="M 90 400 Q 90 270 200 270 Q 310 270 310 400 Z" fill="#0ea5e9"/>
+  <text x="200" y="380" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="white" font-weight="600" opacity="0.9">Remplace-moi par ta photo</text>
+</svg>
