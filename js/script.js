@@ -30,17 +30,46 @@ const observer = new IntersectionObserver(
 
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-/* ---------- Formulaire de contact (simulation) ---------- */
+/* ---------- Formulaire de contact (ouvre le client mail) ---------- */
 const form = document.querySelector('#contact-form');
 if (form) {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const status = document.querySelector('#form-status');
+
+        const prenom  = (form.querySelector('#prenom')?.value  || '').trim();
+        const nom     = (form.querySelector('#nom')?.value     || '').trim();
+        const email   = (form.querySelector('#email')?.value   || '').trim();
+        const message = (form.querySelector('#message')?.value || '').trim();
+
+        if (!prenom || !nom || !email || !message) {
+            if (status) {
+                status.textContent = 'Merci de remplir tous les champs avant d\u2019envoyer.';
+                status.style.color = '#dc2626';
+            }
+            return;
+        }
+
+        const destinataire = 'romaindieunon26@gmail.com';
+        const sujet  = `Contact portfolio \u2014 ${prenom} ${nom}`;
+        const corps  =
+            `Bonjour Romain,\n\n` +
+            `${message}\n\n` +
+            `\u2014\n` +
+            `Nom : ${prenom} ${nom}\n` +
+            `E-mail : ${email}`;
+
+        const mailto =
+            'mailto:' + encodeURIComponent(destinataire) +
+            '?subject=' + encodeURIComponent(sujet) +
+            '&body=' + encodeURIComponent(corps);
+
+        window.location.href = mailto;
+
         if (status) {
-            status.textContent = 'Merci pour votre message, je vous répondrai rapidement.';
+            status.textContent = 'Votre messagerie s\u2019ouvre avec le message pr\u00e9-rempli. Cliquez sur Envoyer pour finaliser l\u2019envoi.';
             status.style.color = 'var(--success)';
         }
-        form.reset();
     });
 }
 
@@ -105,3 +134,28 @@ document.addEventListener('keydown', (e) => {
 
 window.addEventListener('resize', closeLogoPopover);
 window.addEventListener('scroll', closeLogoPopover, { passive: true });
+
+/* ---------- Lightbox pour les captures de procédures ---------- */
+const procLightbox = document.getElementById('proc-lightbox');
+const procLightboxImg = document.getElementById('proc-lightbox-img');
+const procLightboxClose = document.querySelector('.proc-lightbox-close');
+
+function openProcLightbox(src, alt) {
+    if (!procLightbox || !procLightboxImg) return;
+    procLightboxImg.src = src;
+    procLightboxImg.alt = alt || '';
+    procLightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeProcLightbox() {
+    if (!procLightbox) return;
+    procLightbox.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.proc-screen img').forEach(img => {
+    img.addEventListener('click', () => openProcLightbox(img.src, img.alt));
+});
+if (procLightbox) procLightbox.addEventListener('click', closeProcLightbox);
+if (procLightboxClose) procLightboxClose.addEventListener('click', (e) => { e.stopPropagation(); closeProcLightbox(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProcLightbox(); });

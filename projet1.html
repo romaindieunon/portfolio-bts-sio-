@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet 1 — Romain Dieunon</title>
-    <meta name="description" content="Projet 1 — Épreuve E6 du BTS SIO SISR.">
+    <title>Projet 1 — Active Directory, DNS &amp; DHCP — Romain Dieunon</title>
+    <meta name="description" content="Projet 1 de l'épreuve E6 — Déploiement d'une infrastructure Active Directory avec DNS, DHCP et basculement sur Windows Server 2022.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -54,6 +54,12 @@
             margin-top: 2rem;
         }
         .back-link:hover { text-decoration: underline; }
+        .screens-caption {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.9rem;
+            margin: 0.25rem 0 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -78,107 +84,381 @@
 <section class="page-hero">
     <div class="container">
         <p class="breadcrumb"><a href="index.html">Accueil</a> / <a href="epreuve6.html">Épreuve 6</a> / Projet 1</p>
-        <h1>Projet 1 — Titre à compléter</h1>
-        <p>Procédure complète du premier projet personnel présenté à l'épreuve E6.</p>
+        <h1>Projet 1 — Active Directory, DNS &amp; DHCP</h1>
+        <p>Déploiement d'une infrastructure Active Directory complète avec deux contrôleurs de domaine, basculement DHCP, zones DNS, OU, utilisateurs et stratégies de groupe sur Windows Server 2022.</p>
     </div>
 </section>
 
 <section>
     <div class="container">
 
-        <!-- MÉTADONNÉES DU PROJET -->
         <div class="proj-meta fade-in">
-            <div class="proj-meta-item">
-                <span>Contexte</span>
-                <strong>À compléter</strong>
-            </div>
-            <div class="proj-meta-item">
-                <span>Durée</span>
-                <strong>À compléter</strong>
-            </div>
-            <div class="proj-meta-item">
-                <span>Technologies</span>
-                <strong>À compléter</strong>
-            </div>
-            <div class="proj-meta-item">
-                <span>Rôle</span>
-                <strong>À compléter</strong>
-            </div>
+            <div class="proj-meta-item"><span>Domaine</span><strong>beta.btssio.rd</strong></div>
+            <div class="proj-meta-item"><span>NetBIOS</span><strong>BTSSIO-RD</strong></div>
+            <div class="proj-meta-item"><span>Réseau</span><strong>192.168.201.0/24</strong></div>
+            <div class="proj-meta-item"><span>Systèmes</span><strong>Windows Server 2022</strong></div>
+            <div class="proj-meta-item"><span>Rôles</span><strong>AD DS · DNS · DHCP</strong></div>
+            <div class="proj-meta-item"><span>Haute dispo.</span><strong>2 DC + DHCP Failover</strong></div>
         </div>
 
         <!-- SOMMAIRE -->
-        <div class="content-block fade-in">
-            <h3>Présentation du projet</h3>
-            <p>
-                Cette page présentera en détail le <strong>Projet 1</strong> : contexte, objectifs,
-                architecture technique, étapes de mise en œuvre, difficultés rencontrées et bilan.
-                Le contenu sera intégré dès la transmission du document (Word ou export OneNote —
-                ≈ 60 pages).
-            </p>
+        <div class="proj-toc fade-in">
+            <h4>Sommaire</h4>
+            <ol>
+                <li><a href="#contexte">Contexte et objectifs</a></li>
+                <li><a href="#architecture">Architecture réseau cible</a></li>
+                <li><a href="#environnement">Environnement technique</a></li>
+                <li><a href="#etape4">Étape 1 — Préparation de Beta</a></li>
+                <li><a href="#etape5">Étape 2 — Installation des rôles</a></li>
+                <li><a href="#etape6">Étape 3 — Promotion en contrôleur de domaine</a></li>
+                <li><a href="#etape7">Étape 4 — Configuration du DHCP</a></li>
+                <li><a href="#etape8">Étape 5 — Configuration du DNS</a></li>
+                <li><a href="#etape9">Étape 6 — OU, utilisateurs et groupes</a></li>
+                <li><a href="#etape10">Étape 7 — Second contrôleur (Delta)</a></li>
+                <li><a href="#etape11">Étape 8 — Basculement DHCP</a></li>
+                <li><a href="#etape12">Étape 9 — Stratégies de groupe</a></li>
+                <li><a href="#etape13">Étape 10 — Tests et vérifications</a></li>
+                <li><a href="#bilan">Bilan et compétences mobilisées</a></li>
+            </ol>
+        </div>
 
-            <div class="proj-toc">
-                <h4>Sommaire</h4>
-                <ol>
-                    <li><a href="#contexte">Contexte et cahier des charges</a></li>
-                    <li><a href="#objectifs">Objectifs du projet</a></li>
-                    <li><a href="#architecture">Architecture et choix techniques</a></li>
-                    <li><a href="#mise-en-oeuvre">Mise en œuvre</a></li>
-                    <li><a href="#tests">Tests et validation</a></li>
-                    <li><a href="#bilan">Bilan et compétences acquises</a></li>
-                    <li><a href="#annexes">Annexes</a></li>
-                </ol>
+        <!-- CONTEXTE -->
+        <div id="contexte" class="content-block fade-in">
+            <h3>1. Contexte et objectifs</h3>
+            <p>
+                Dans le cadre de mon BTS SIO option SISR, j'ai mené le déploiement complet d'une infrastructure
+                <strong>Active Directory</strong> destinée à simuler le système d'information d'un établissement
+                scolaire (salle de BTS SIO, professeurs et élèves). Le cahier des charges fixait trois objectifs :
+            </p>
+            <ul>
+                <li><strong>Centraliser</strong> la gestion des comptes utilisateurs et des postes clients via un annuaire AD.</li>
+                <li><strong>Automatiser</strong> la distribution des paramètres réseau (IP, passerelle, DNS) avec un serveur DHCP.</li>
+                <li><strong>Assurer la continuité de service</strong> grâce à deux contrôleurs de domaine et un basculement DHCP.</li>
+            </ul>
+            <p>
+                Le projet couvre l'ensemble du cycle : installation, configuration, mise en production, tests et
+                documentation. Il mobilise directement les compétences du référentiel SISR en administration des
+                systèmes et des réseaux.
+            </p>
+        </div>
+
+        <!-- ARCHITECTURE -->
+        <div id="architecture" class="content-block fade-in">
+            <h3>2. Architecture réseau cible</h3>
+            <p>L'infrastructure repose sur un unique réseau local segmenté de la manière suivante :</p>
+            <ul>
+                <li><strong>Beta</strong> — contrôleur de domaine principal, DNS et DHCP — <code>192.168.201.1</code></li>
+                <li><strong>Delta</strong> — contrôleur de domaine secondaire, DNS et DHCP partenaire — <code>192.168.201.2</code></li>
+                <li><strong>Passerelle / pare-feu</strong> — <code>192.168.201.250</code></li>
+                <li><strong>Plage DHCP clients</strong> — <code>192.168.201.10</code> → <code>192.168.201.200</code></li>
+                <li><strong>Domaine AD</strong> — <code>beta.btssio.rd</code> (NetBIOS : <code>BTSSIO-RD</code>)</li>
+            </ul>
+            <p>
+                Les deux contrôleurs répliquent automatiquement la base AD. Le DHCP fonctionne en mode
+                <em>équilibrage de charge</em> : les deux serveurs distribuent des baux à 50 / 50, et en cas de
+                panne, l'un prend 100 % de la charge sans interruption.
+            </p>
+        </div>
+
+        <!-- ENVIRONNEMENT -->
+        <div id="environnement" class="content-block fade-in">
+            <h3>3. Environnement technique</h3>
+            <ul>
+                <li>Hyperviseur : <strong>VMware Workstation</strong> (machines virtuelles isolées sur un même vSwitch).</li>
+                <li>OS serveur : <strong>Windows Server 2022 Standard (GUI)</strong> — 2 machines.</li>
+                <li>OS client de test : <strong>Windows 10 Pro</strong>.</li>
+                <li>Rôles installés : <strong>AD DS, DNS, DHCP</strong>.</li>
+                <li>Outils de gestion : Gestionnaire de serveur, Utilisateurs et ordinateurs AD, Gestion DHCP, Gestion DNS, Gestion de stratégie de groupe.</li>
+            </ul>
+        </div>
+
+        <div id="etape1" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">1</div>
+                <h3 style="margin:0;">Préparation du premier serveur (Beta)</h3>
+            </div>
+            <p>Avant d'installer le moindre rôle, il faut préparer la machine qui deviendra le contrôleur de domaine principal. Je renomme le serveur « Beta » via Gestionnaire de serveur, je lui attribue une adresse IP fixe dans le réseau 192.168.201.0/24 (Beta = .1, passerelle = .250) et je fixe son serveur DNS préféré sur lui-même (127.0.0.1). Cette étape est critique : un DC change très mal d'adresse ou de nom une fois promu.</p>
+            <p class="screens-caption">Captures — configuration IP de Beta, renommage et redémarrage (10 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_000.png" alt="Préparation du premier serveur (Beta) — capture 1/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_001.png" alt="Préparation du premier serveur (Beta) — capture 2/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_002.png" alt="Préparation du premier serveur (Beta) — capture 3/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_003.png" alt="Préparation du premier serveur (Beta) — capture 4/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_004.png" alt="Préparation du premier serveur (Beta) — capture 5/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_005.png" alt="Préparation du premier serveur (Beta) — capture 6/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_006.png" alt="Préparation du premier serveur (Beta) — capture 7/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_007.png" alt="Préparation du premier serveur (Beta) — capture 8/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_008.png" alt="Préparation du premier serveur (Beta) — capture 9/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_009.png" alt="Préparation du premier serveur (Beta) — capture 10/10" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape2" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">2</div>
+                <h3 style="margin:0;">Installation du rôle AD DS, DNS et DHCP sur Beta</h3>
+            </div>
+            <p>Depuis Gestionnaire de serveur → « Ajouter des rôles et fonctionnalités », je sélectionne successivement <strong>Services AD DS</strong>, <strong>Serveur DNS</strong> et <strong>Serveur DHCP</strong>. L'assistant installe les binaires mais ne promeut pas encore la machine : c'est une étape séparée. Je vérifie en fin d'installation que les trois rôles apparaissent bien dans le tableau de bord.</p>
+            <p class="screens-caption">Captures — assistant d'ajout de rôles, sélection AD DS / DNS / DHCP (13 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_010.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 1/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_011.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 2/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_012.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 3/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_013.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 4/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_014.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 5/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_015.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 6/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_016.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 7/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_017.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 8/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_018.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 9/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_019.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 10/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_020.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 11/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_021.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 12/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_022.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 13/13" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape3" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">3</div>
+                <h3 style="margin:0;">Promotion de Beta et création de la forêt beta.btssio.rd</h3>
+            </div>
+            <p>L'icône de notification du Gestionnaire de serveur propose « Promouvoir ce serveur en contrôleur de domaine ». Je choisis <strong>Ajouter une nouvelle forêt</strong> avec le nom de domaine racine <code>beta.btssio.rd</code>. Je laisse les niveaux fonctionnels en Windows Server 2016 (par défaut), je coche bien <em>Serveur DNS</em> et je définis le mot de passe DSRM (restauration des services d'annuaire). Le nom NetBIOS <strong>BTSSIO-RD</strong> est généré automatiquement. L'assistant effectue les vérifications de prérequis puis redémarre la machine : Beta est désormais DC.</p>
+            <p class="screens-caption">Captures — assistant de promotion, choix de la forêt, niveaux fonctionnels, prérequis (18 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_023.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 1/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_024.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 2/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_025.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 3/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_026.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 4/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_027.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 5/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_028.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 6/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_029.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 7/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_030.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 8/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_031.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 9/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_032.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 10/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_033.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 11/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_034.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 12/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_035.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 13/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_036.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 14/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_037.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 15/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_038.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 16/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_039.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 17/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_040.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 18/18" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape4" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">4</div>
+                <h3 style="margin:0;">Installation et configuration du serveur DHCP (étendue principale)</h3>
+            </div>
+            <p>Après la promotion, je termine la configuration post-déploiement du rôle DHCP (autorisation dans l'AD avec un compte de l'administrateur du domaine). Je crée ensuite une <strong>nouvelle étendue</strong> couvrant le réseau 192.168.201.10 → 192.168.201.200 (masque /24). Je renseigne les options standard : passerelle par défaut (<code>192.168.201.250</code>), serveur DNS (<code>192.168.201.1</code> = Beta) et nom de domaine (<code>beta.btssio.rd</code>). J'active l'étendue à la fin de l'assistant.</p>
+            <p class="screens-caption">Captures — création de l'étendue DHCP, plage d'adresses, options de l'étendue (14 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_041.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 1/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_042.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 2/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_043.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 3/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_044.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 4/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_045.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 5/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_046.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 6/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_047.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 7/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_048.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 8/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_049.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 9/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_050.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 10/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_051.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 11/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_052.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 12/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_053.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 13/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_054.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 14/14" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape5" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">5</div>
+                <h3 style="margin:0;">Configuration du DNS et zones de recherche inversée</h3>
+            </div>
+            <p>Le DNS a été installé en même temps qu'AD DS, une zone directe <code>beta.btssio.rd</code> existe donc déjà. Je crée en plus une <strong>zone de recherche inversée IPv4</strong> pour 192.168.201.0/24 afin que les requêtes « PTR » (IP → nom) fonctionnent correctement. J'ajoute quelques enregistrements <em>A</em> et <em>PTR</em> manuels pour valider le bon fonctionnement et je teste la résolution avec <code>nslookup</code>.</p>
+            <p class="screens-caption">Captures — gestionnaire DNS, assistant de zone inversée, tests de résolution (14 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_055.png" alt="Configuration du DNS et zones de recherche inversée — capture 1/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_056.png" alt="Configuration du DNS et zones de recherche inversée — capture 2/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_057.png" alt="Configuration du DNS et zones de recherche inversée — capture 3/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_058.png" alt="Configuration du DNS et zones de recherche inversée — capture 4/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_059.png" alt="Configuration du DNS et zones de recherche inversée — capture 5/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_060.png" alt="Configuration du DNS et zones de recherche inversée — capture 6/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_061.png" alt="Configuration du DNS et zones de recherche inversée — capture 7/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_062.png" alt="Configuration du DNS et zones de recherche inversée — capture 8/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_063.png" alt="Configuration du DNS et zones de recherche inversée — capture 9/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_064.png" alt="Configuration du DNS et zones de recherche inversée — capture 10/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_065.png" alt="Configuration du DNS et zones de recherche inversée — capture 11/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_066.png" alt="Configuration du DNS et zones de recherche inversée — capture 12/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_067.png" alt="Configuration du DNS et zones de recherche inversée — capture 13/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_068.png" alt="Configuration du DNS et zones de recherche inversée — capture 14/14" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape6" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">6</div>
+                <h3 style="margin:0;">Création des OU, utilisateurs et groupes Active Directory</h3>
+            </div>
+            <p>Dans la console <strong>Utilisateurs et ordinateurs Active Directory</strong>, je crée une arborescence d'unités d'organisation représentative de l'établissement : <code>Salle_BTSSIO</code> → <code>Professeurs</code> et <code>Eleves</code>, puis des utilisateurs dans chacune. Je crée également des groupes de sécurité (<em>Groupe_Professeurs</em>, <em>Groupe_Eleves</em>) et j'y ajoute les membres correspondants. Chaque utilisateur reçoit un mot de passe initial avec l'option <em>« changement au prochain ouverture de session »</em> pour respecter les bonnes pratiques de sécurité.</p>
+            <p class="screens-caption">Captures — création des OU, ajout des utilisateurs, affectation aux groupes (20 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_069.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 1/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_070.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 2/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_071.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 3/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_072.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 4/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_073.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 5/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_074.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 6/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_075.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 7/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_076.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 8/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_077.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 9/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_078.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 10/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_079.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 11/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_080.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 12/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_081.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 13/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_082.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 14/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_083.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 15/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_084.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 16/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_085.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 17/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_086.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 18/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_087.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 19/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_088.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 20/20" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape7" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">7</div>
+                <h3 style="margin:0;">Ajout d'un second contrôleur de domaine (Delta)</h3>
+            </div>
+            <p>Pour la <strong>haute disponibilité</strong>, j'installe un second serveur, <strong>Delta</strong>, dans le même réseau (192.168.201.2). Je configure son IP fixe, je le joins au domaine <code>beta.btssio.rd</code> puis je l'élève en DC supplémentaire via l'assistant « Promouvoir ce serveur en contrôleur de domaine » → <em>Ajouter un contrôleur de domaine à un domaine existant</em>. Je coche <strong>DNS</strong> et <strong>catalogue global</strong> de manière à ce que Delta puisse assurer toutes les fonctions en cas de panne de Beta. La réplication AD se met en place automatiquement.</p>
+            <p class="screens-caption">Captures — jonction au domaine, promotion de Delta, réplication AD (20 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_089.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 1/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_090.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 2/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_091.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 3/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_092.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 4/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_093.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 5/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_094.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 6/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_095.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 7/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_096.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 8/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_097.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 9/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_098.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 10/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_099.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 11/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_100.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 12/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_101.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 13/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_102.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 14/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_103.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 15/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_104.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 16/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_105.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 17/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_106.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 18/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_107.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 19/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_108.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 20/20" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape8" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">8</div>
+                <h3 style="margin:0;">Configuration du basculement DHCP (DHCP Failover)</h3>
+            </div>
+            <p>Sur la console DHCP de Beta, un clic droit sur l'étendue → « Configurer un basculement » permet de mettre en place la <strong>redondance DHCP</strong> avec Delta comme partenaire. Je choisis le mode <strong>Équilibrage de charge</strong> (50 % / 50 %) avec un secret partagé. À la fin de l'assistant, Delta récupère automatiquement la configuration de l'étendue et les deux serveurs se synchronisent. Si l'un tombe, l'autre continue d'attribuer les baux sans interruption pour les postes clients.</p>
+            <p class="screens-caption">Captures — assistant de basculement, mode d'équilibrage, vérification sur Delta (14 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_109.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 1/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_110.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 2/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_111.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 3/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_112.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 4/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_113.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 5/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_114.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 6/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_115.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 7/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_116.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 8/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_117.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 9/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_118.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 10/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_119.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 11/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_120.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 12/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_121.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 13/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_122.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 14/14" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape9" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">9</div>
+                <h3 style="margin:0;">Mise en place des stratégies de groupe (GPO)</h3>
+            </div>
+            <p>Dans <strong>Gestion de stratégie de groupe</strong>, je crée des GPO liées aux OU pour appliquer des restrictions et des paramètres : désactivation de l'exécution automatique des supports amovibles, redirection des dossiers, stratégies de mot de passe, fond d'écran verrouillé pour les élèves, refus d'accès au Panneau de configuration, etc. Chaque GPO est d'abord <em>créée</em>, puis <em>éditée</em> (Configuration ordinateur ou utilisateur) et enfin <em>liée</em> à l'OU concernée. Un <code>gpupdate /force</code> sur un poste client permet de vérifier que les paramètres s'appliquent bien.</p>
+            <p class="screens-caption">Captures — création et édition des GPO, liaisons aux OU, paramètres de sécurité (21 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_123.png" alt="Mise en place des stratégies de groupe (GPO) — capture 1/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_124.png" alt="Mise en place des stratégies de groupe (GPO) — capture 2/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_125.png" alt="Mise en place des stratégies de groupe (GPO) — capture 3/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_126.png" alt="Mise en place des stratégies de groupe (GPO) — capture 4/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_127.png" alt="Mise en place des stratégies de groupe (GPO) — capture 5/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_128.png" alt="Mise en place des stratégies de groupe (GPO) — capture 6/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_129.png" alt="Mise en place des stratégies de groupe (GPO) — capture 7/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_130.png" alt="Mise en place des stratégies de groupe (GPO) — capture 8/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_131.png" alt="Mise en place des stratégies de groupe (GPO) — capture 9/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_132.png" alt="Mise en place des stratégies de groupe (GPO) — capture 10/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_133.png" alt="Mise en place des stratégies de groupe (GPO) — capture 11/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_134.png" alt="Mise en place des stratégies de groupe (GPO) — capture 12/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_135.png" alt="Mise en place des stratégies de groupe (GPO) — capture 13/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_136.png" alt="Mise en place des stratégies de groupe (GPO) — capture 14/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_137.png" alt="Mise en place des stratégies de groupe (GPO) — capture 15/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_138.png" alt="Mise en place des stratégies de groupe (GPO) — capture 16/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_139.png" alt="Mise en place des stratégies de groupe (GPO) — capture 17/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_140.png" alt="Mise en place des stratégies de groupe (GPO) — capture 18/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_141.png" alt="Mise en place des stratégies de groupe (GPO) — capture 19/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_142.png" alt="Mise en place des stratégies de groupe (GPO) — capture 20/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_143.png" alt="Mise en place des stratégies de groupe (GPO) — capture 21/21" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape10" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">10</div>
+                <h3 style="margin:0;">Tests et vérifications finaux</h3>
+            </div>
+            <p>Pour valider l'infrastructure, j'effectue une série de tests : jonction d'un poste client Windows 10 au domaine <code>beta.btssio.rd</code>, ouverture de session avec un utilisateur AD, vérification que la GPO s'applique, obtention d'une adresse IP via DHCP, résolution DNS directe et inverse, arrêt volontaire du DC Beta pour vérifier que Delta prend le relais (DHCP + authentification) et enfin contrôle de la réplication AD avec <code>repadmin /replsummary</code>.</p>
+            <p class="screens-caption">Captures — jonction d'un client, tests DNS/DHCP, bascule sur Delta, réplication (11 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/png_144.png" alt="Tests et vérifications finaux — capture 1/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_145.png" alt="Tests et vérifications finaux — capture 2/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_146.png" alt="Tests et vérifications finaux — capture 3/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_147.png" alt="Tests et vérifications finaux — capture 4/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_148.png" alt="Tests et vérifications finaux — capture 5/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_149.png" alt="Tests et vérifications finaux — capture 6/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_150.png" alt="Tests et vérifications finaux — capture 7/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_151.png" alt="Tests et vérifications finaux — capture 8/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_152.png" alt="Tests et vérifications finaux — capture 9/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_153.png" alt="Tests et vérifications finaux — capture 10/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/jpg_000.jpg" alt="Tests et vérifications finaux — capture 11/11" loading="lazy"></figure>
             </div>
         </div>
 
-        <!-- SECTION 1 -->
-        <div class="content-block fade-in" id="contexte">
-            <h3>1. Contexte et cahier des charges</h3>
-            <p><em>Section à compléter — description du contexte, de la demande initiale et du cahier des charges du projet.</em></p>
+        <!-- BILAN -->
+        <div id="bilan" class="content-block fade-in">
+            <h3>Bilan et compétences mobilisées</h3>
+            <p>
+                Ce projet m'a permis de mettre en œuvre de bout en bout une infrastructure Active Directory
+                réaliste, du poste vierge à la console de supervision. J'ai notamment consolidé les compétences
+                suivantes, directement rattachées au référentiel BTS SIO SISR :
+            </p>
+            <ul>
+                <li><strong>Installer, configurer et administrer un service</strong> (AD DS, DNS, DHCP) sur Windows Server.</li>
+                <li><strong>Assurer la disponibilité</strong> d'un service d'annuaire et d'un service DHCP par redondance.</li>
+                <li><strong>Gérer les identités et les accès</strong> via des OU, utilisateurs et groupes AD.</li>
+                <li><strong>Déployer et centraliser</strong> les paramètres via les stratégies de groupe (GPO).</li>
+                <li><strong>Documenter une infrastructure</strong> et tracer la configuration en vue d'une reprise d'exploitation.</li>
+            </ul>
+            <p>
+                Les tests finaux ont validé la cohérence de l'ensemble : résolution DNS bidirectionnelle, obtention
+                d'IP via DHCP, authentification AD, application des GPO, réplication entre Beta et Delta et
+                basculement automatique lors de l'arrêt volontaire d'un contrôleur.
+            </p>
+            <a href="epreuve6.html" class="back-link">← Retour aux projets de l'épreuve E6</a>
         </div>
-
-        <!-- SECTION 2 -->
-        <div class="content-block fade-in" id="objectifs">
-            <h3>2. Objectifs du projet</h3>
-            <p><em>Section à compléter — objectifs fonctionnels et techniques à atteindre.</em></p>
-        </div>
-
-        <!-- SECTION 3 -->
-        <div class="content-block fade-in" id="architecture">
-            <h3>3. Architecture et choix techniques</h3>
-            <p><em>Section à compléter — schéma d'architecture, technologies retenues et justification des choix.</em></p>
-        </div>
-
-        <!-- SECTION 4 -->
-        <div class="content-block fade-in" id="mise-en-oeuvre">
-            <h3>4. Mise en œuvre</h3>
-            <p><em>Section à compléter — étapes détaillées de réalisation, captures d'écran et extraits de configuration.</em></p>
-        </div>
-
-        <!-- SECTION 5 -->
-        <div class="content-block fade-in" id="tests">
-            <h3>5. Tests et validation</h3>
-            <p><em>Section à compléter — scénarios de test, résultats obtenus et procédure de recette.</em></p>
-        </div>
-
-        <!-- SECTION 6 -->
-        <div class="content-block fade-in" id="bilan">
-            <h3>6. Bilan et compétences acquises</h3>
-            <p><em>Section à compléter — retour d'expérience, difficultés surmontées et compétences SISR mobilisées.</em></p>
-        </div>
-
-        <!-- SECTION 7 -->
-        <div class="content-block fade-in" id="annexes">
-            <h3>7. Annexes</h3>
-            <p><em>Section à compléter — documents complémentaires, schémas, fichiers de configuration et liens externes.</em></p>
-        </div>
-
-        <a href="epreuve6.html" class="back-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-            Retour aux projets
-        </a>
 
     </div>
 </section>
+
+<!-- Lightbox pour les captures -->
+<div id="proc-lightbox" class="proc-lightbox" aria-hidden="true">
+    <button class="proc-lightbox-close" aria-label="Fermer">&times;</button>
+    <img id="proc-lightbox-img" src="" alt="">
+</div>
 
 <footer class="footer">
     <div class="container">
