@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet 2 — Romain Dieunon</title>
-    <meta name="description" content="Projet 2 — Épreuve E6 du BTS SIO SISR.">
+    <title>Projet 2 — PFsense (Pare-feu) — Romain Dieunon</title>
+    <meta name="description" content="Projet 2 de l'épreuve E6 — Mise en place de deux pare-feu PFsense redondés (CARP) avec VLAN et routage inter-VLAN.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -54,6 +54,12 @@
             margin-top: 2rem;
         }
         .back-link:hover { text-decoration: underline; }
+        .screens-caption {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.9rem;
+            margin: 0.25rem 0 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -78,107 +84,296 @@
 <section class="page-hero">
     <div class="container">
         <p class="breadcrumb"><a href="index.html">Accueil</a> / <a href="epreuve6.html">Épreuve 6</a> / Projet 2</p>
-        <h1>Projet 2 — Titre à compléter</h1>
-        <p>Procédure complète du second projet personnel présenté à l'épreuve E6.</p>
+        <h1>Projet 2 — PFsense (Pare-feu &amp; VLAN)</h1>
+        <p>Installation et configuration de deux pare-feu PFsense redondés (Alpha &amp; Lambda) en haute disponibilité CARP, avec segmentation VLAN serveur/client et routage inter-VLAN.</p>
     </div>
 </section>
 
 <section>
     <div class="container">
 
-        <!-- MÉTADONNÉES DU PROJET -->
         <div class="proj-meta fade-in">
-            <div class="proj-meta-item">
-                <span>Contexte</span>
-                <strong>À compléter</strong>
-            </div>
-            <div class="proj-meta-item">
-                <span>Durée</span>
-                <strong>À compléter</strong>
-            </div>
-            <div class="proj-meta-item">
-                <span>Technologies</span>
-                <strong>À compléter</strong>
-            </div>
-            <div class="proj-meta-item">
-                <span>Rôle</span>
-                <strong>À compléter</strong>
-            </div>
+            <div class="proj-meta-item"><span>Pare-feu</span><strong>PFsense (FreeBSD)</strong></div>
+            <div class="proj-meta-item"><span>Alpha (maître)</span><strong>192.168.100.250</strong></div>
+            <div class="proj-meta-item"><span>Lambda (secours)</span><strong>192.168.100.251</strong></div>
+            <div class="proj-meta-item"><span>IP virtuelle CARP</span><strong>192.168.100.1</strong></div>
+            <div class="proj-meta-item"><span>VLAN serveur</span><strong>192.168.200.0/24</strong></div>
+            <div class="proj-meta-item"><span>VLAN client</span><strong>192.168.201.0/24</strong></div>
+            <div class="proj-meta-item"><span>Domaine</span><strong>btssio.rd</strong></div>
+            <div class="proj-meta-item"><span>Haute dispo.</span><strong>CARP + XMLRPC sync</strong></div>
         </div>
 
         <!-- SOMMAIRE -->
-        <div class="content-block fade-in">
-            <h3>Présentation du projet</h3>
-            <p>
-                Cette page présentera en détail le <strong>Projet 2</strong> : contexte, objectifs,
-                architecture technique, étapes de mise en œuvre, difficultés rencontrées et bilan.
-                Le contenu sera intégré dès la transmission du document (Word ou export OneNote —
-                ≈ 60 pages).
-            </p>
+        <div class="proj-toc fade-in">
+            <h4>Sommaire</h4>
+            <ol>
+                <li><a href="#contexte">Contexte et objectifs</a></li>
+                <li><a href="#architecture">Architecture réseau cible</a></li>
+                <li><a href="#environnement">Environnement technique</a></li>
+                <li><a href="#etape1">Étape 1 — Préparation et boot ISO</a></li>
+                <li><a href="#etape2">Étape 2 — Installation du système</a></li>
+                <li><a href="#etape3">Étape 3 — Configuration console des interfaces</a></li>
+                <li><a href="#etape4">Étape 4 — Interface web et Setup Wizard</a></li>
+                <li><a href="#etape5">Étape 5 — Création des VLAN</a></li>
+                <li><a href="#etape6">Étape 6 — Pare-feu et NAT</a></li>
+                <li><a href="#etape7">Étape 7 — Second PFsense (Lambda)</a></li>
+                <li><a href="#etape8">Étape 8 — Haute disponibilité CARP</a></li>
+                <li><a href="#etape9">Étape 9 — Tests et vérifications</a></li>
+                <li><a href="#bilan">Bilan et compétences mobilisées</a></li>
+            </ol>
+        </div>
 
-            <div class="proj-toc">
-                <h4>Sommaire</h4>
-                <ol>
-                    <li><a href="#contexte">Contexte et cahier des charges</a></li>
-                    <li><a href="#objectifs">Objectifs du projet</a></li>
-                    <li><a href="#architecture">Architecture et choix techniques</a></li>
-                    <li><a href="#mise-en-oeuvre">Mise en œuvre</a></li>
-                    <li><a href="#tests">Tests et validation</a></li>
-                    <li><a href="#bilan">Bilan et compétences acquises</a></li>
-                    <li><a href="#annexes">Annexes</a></li>
-                </ol>
+        <!-- CONTEXTE -->
+        <div id="contexte" class="content-block fade-in">
+            <h3>1. Contexte et objectifs</h3>
+            <p>
+                Ce second projet de l'épreuve E6 vient compléter le Projet 1 (Active Directory) : il met en place
+                la <strong>couche réseau et sécurité</strong> qui protège l'infrastructure et permet aux clients
+                d'accéder à Internet. Le cahier des charges fixait trois objectifs principaux :
+            </p>
+            <ul>
+                <li><strong>Sécuriser</strong> la sortie Internet et les flux entre les sous-réseaux par un pare-feu open-source.</li>
+                <li><strong>Segmenter</strong> le réseau en deux VLAN (serveur et client) pour isoler les ressources sensibles.</li>
+                <li><strong>Garantir la continuité de service</strong> par la mise en place de deux PFsense en haute disponibilité (CARP).</li>
+            </ul>
+        </div>
+
+        <!-- ARCHITECTURE -->
+        <div id="architecture" class="content-block fade-in">
+            <h3>2. Architecture réseau cible</h3>
+            <p>L'infrastructure complète (pare-feu, switch, serveurs, clients) est représentée ci-dessous (schéma commun aux deux projets de l'épreuve E6) :</p>
+            <figure class="proc-screen" style="max-width: 900px; margin: 1.5rem auto;">
+                <img src="assets/projets/schema-reseau.png" alt="Schéma réseau global — VLAN, PFsense, switch Theta, serveurs et clients" style="width:100%; height:auto; cursor: zoom-in;">
+                <figcaption style="text-align:center; font-style:italic; color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">
+                    Schéma réseau global du projet (commun aux Projet 1 et Projet 2). Cliquer pour agrandir.
+                </figcaption>
+            </figure>
+            <p style="margin-top: 1.5rem;">Détail des éléments représentés :</p>
+            <ul>
+                <li><strong>Routeur FAI</strong> — sortie Internet (deux WAN en IP auto sur Alpha et Lambda).</li>
+                <li><strong>Alpha</strong> — PFsense principal : LAN <code>192.168.100.250</code>, VLAN 200 <code>192.168.200.250</code>, VLAN 201 <code>192.168.201.250</code>.</li>
+                <li><strong>Lambda</strong> — PFsense de secours : LAN <code>192.168.100.251</code>. Reprend l'IP virtuelle en cas de panne.</li>
+                <li><strong>IP virtuelle (CARP)</strong> — <code>192.168.100.1</code>, point d'entrée unique vu des clients.</li>
+                <li><strong>Switch Theta</strong> — Fa0/1-12 (VLAN 200), Fa0/13-22 (VLAN 201), Fa0/23-24 + Gi0/1-2 (trunks vers les PFsense).</li>
+                <li><strong>VLAN 200 — Serveurs</strong> (<code>192.168.200.0/24</code>) — Beta, Delta (AD/DNS/DHCP), Epsilon (GLPI), Kappa (TrueNAS), Gamma (Proxmox).</li>
+                <li><strong>VLAN 201 — Clients</strong> (<code>192.168.201.0/24</code>) — postes ZET-xx + borne Wi-Fi ETA, IP attribuées par DHCP.</li>
+            </ul>
+            <p>
+                Les deux PFsense se synchronisent en temps réel par <em>XMLRPC sync</em> : toute modification faite
+                sur Alpha (règles, VLAN, NAT, alias) est immédiatement répliquée sur Lambda.
+            </p>
+        </div>
+
+        <!-- ENVIRONNEMENT -->
+        <div id="environnement" class="content-block fade-in">
+            <h3>3. Environnement technique</h3>
+            <ul>
+                <li>Hyperviseur : <strong>VMware Workstation</strong> (machines virtuelles avec deux cartes réseau).</li>
+                <li>Système : <strong>PFsense CE 2.7</strong> (basé sur FreeBSD).</li>
+                <li>Switch : <strong>Cisco Catalyst</strong> (Theta) — VLAN dot1Q avec trunks.</li>
+                <li>Cartes réseau par PFsense : <strong>WAN</strong> (sortie Internet) + <strong>LAN</strong> (interface VLAN trunk).</li>
+                <li>Outils : console série, navigateur web (interface d'administration HTTPS).</li>
+            </ul>
+        </div>
+
+        <div id="etape1" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">1</div>
+                <h3 style="margin:0;">Préparation et démarrage de l'installation</h3>
+            </div>
+            <p>PFsense est un pare-feu open-source basé sur FreeBSD. Je commence par récupérer l'image ISO officielle depuis <code>pfsense.org</code> et je crée une machine virtuelle dédiée avec deux cartes réseau (une pour le <strong>WAN</strong> sortie Internet, une pour le <strong>LAN</strong> côté infrastructure interne). Je démarre la VM sur l'ISO, accepte le contrat de licence et choisis l'option <em>Install</em> dans le menu de boot.</p>
+            <p class="screens-caption">Captures — boot sur l'ISO, menu de licence, premier choix d'installation (8 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_000.png" alt="Préparation et démarrage de l'installation — capture 1/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_001.png" alt="Préparation et démarrage de l'installation — capture 2/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_002.png" alt="Préparation et démarrage de l'installation — capture 3/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_003.png" alt="Préparation et démarrage de l'installation — capture 4/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_004.png" alt="Préparation et démarrage de l'installation — capture 5/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_005.png" alt="Préparation et démarrage de l'installation — capture 6/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_006.png" alt="Préparation et démarrage de l'installation — capture 7/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_007.png" alt="Préparation et démarrage de l'installation — capture 8/8" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape2" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">2</div>
+                <h3 style="margin:0;">Installation du système PFsense</h3>
+            </div>
+            <p>L'installateur propose plusieurs étapes : choix du clavier (<strong>fr-pc</strong>), sélection du disque cible, type de partitionnement (j'utilise <strong>Auto (UFS)</strong>, GPT BIOS), et copie des fichiers système. Le processus de copie prend quelques minutes. À la fin, l'installateur propose de réinstaller depuis le shell ou de redémarrer : je choisis <em>Reboot</em> et retire l'ISO de la VM pour démarrer sur le disque.</p>
+            <p class="screens-caption">Captures — choix clavier, partitionnement, copie des fichiers, fin d'installation (10 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_008.png" alt="Installation du système PFsense — capture 1/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_009.png" alt="Installation du système PFsense — capture 2/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_010.png" alt="Installation du système PFsense — capture 3/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_011.png" alt="Installation du système PFsense — capture 4/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_012.png" alt="Installation du système PFsense — capture 5/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_013.png" alt="Installation du système PFsense — capture 6/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_014.png" alt="Installation du système PFsense — capture 7/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_015.png" alt="Installation du système PFsense — capture 8/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_016.png" alt="Installation du système PFsense — capture 9/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_017.png" alt="Installation du système PFsense — capture 10/10" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape3" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">3</div>
+                <h3 style="margin:0;">Configuration initiale par la console (assignation des interfaces)</h3>
+            </div>
+            <p>Après le redémarrage, PFsense s'ouvre sur un menu console. La première étape critique est l'<strong>assignation des interfaces réseau</strong> : l'option <code>1</code> demande d'identifier la carte WAN (sortie Internet) et la carte LAN (réseau interne) en utilisant les noms d'interfaces FreeBSD (<code>em0</code>, <code>em1</code>, etc.). L'option <code>2</code> permet ensuite d'attribuer une IP fixe sur le LAN — je configure <code>192.168.100.250</code> (Alpha) avec un masque /24, et je désactive le DHCP côté LAN car ce service est assuré par les serveurs Beta et Delta.</p>
+            <p class="screens-caption">Captures — menu console, assignation des interfaces, configuration de l'IP LAN (10 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_018.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 1/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_019.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 2/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_020.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 3/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_021.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 4/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_022.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 5/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_023.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 6/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_024.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 7/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_025.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 8/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_026.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 9/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_027.png" alt="Configuration initiale par la console (assignation des interfaces) — capture 10/10" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape4" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">4</div>
+                <h3 style="margin:0;">Accès à l'interface web et configuration générale</h3>
+            </div>
+            <p>Une fois le LAN configuré, je peux accéder à PFsense depuis un navigateur sur l'IP du LAN (<code>https://192.168.100.250</code>). L'identifiant par défaut est <code>admin / pfsense</code> — la première connexion lance un assistant <em>Setup Wizard</em> qui demande le hostname (<strong>Alpha</strong>), le domaine (<code>btssio.rd</code>), les serveurs DNS (les contrôleurs de domaine Beta et Delta), le fuseau horaire et les paramètres WAN. Je termine en changeant le mot de passe administrateur par un mot de passe fort.</p>
+            <p class="screens-caption">Captures — page de connexion, assistant Setup Wizard, paramètres généraux (8 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_028.png" alt="Accès à l'interface web et configuration générale — capture 1/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_029.png" alt="Accès à l'interface web et configuration générale — capture 2/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_030.png" alt="Accès à l'interface web et configuration générale — capture 3/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_031.png" alt="Accès à l'interface web et configuration générale — capture 4/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_032.png" alt="Accès à l'interface web et configuration générale — capture 5/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_033.png" alt="Accès à l'interface web et configuration générale — capture 6/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_034.png" alt="Accès à l'interface web et configuration générale — capture 7/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_035.png" alt="Accès à l'interface web et configuration générale — capture 8/8" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape5" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">5</div>
+                <h3 style="margin:0;">Création et configuration des VLAN (200 serveur, 201 client)</h3>
+            </div>
+            <p>Pour segmenter le trafic, je configure deux VLAN sur l'interface LAN dans <em>Interfaces → Assignments → VLANs</em>. Je crée le <strong>VLAN 200</strong> (réseau serveurs <code>192.168.200.0/24</code>, IP de PFsense <code>192.168.200.250</code>) et le <strong>VLAN 201</strong> (réseau clients <code>192.168.201.0/24</code>, IP de PFsense <code>192.168.201.250</code>). Chaque VLAN est ensuite affecté en tant qu'interface dans <em>Interfaces → Assignments</em>, puis activé et nommé. Côté switch Theta, les ports correspondants sont configurés en <em>access</em> sur le bon VLAN, et les ports vers PFsense en <em>trunk</em> (<code>dot1q</code>).</p>
+            <p class="screens-caption">Captures — création des VLAN, attribution des interfaces, configuration des IP (10 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_036.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 1/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_037.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 2/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_038.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 3/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_039.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 4/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_040.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 5/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_041.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 6/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_042.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 7/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_043.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 8/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_044.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 9/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_045.png" alt="Création et configuration des VLAN (200 serveur, 201 client) — capture 10/10" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape6" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">6</div>
+                <h3 style="margin:0;">Règles de pare-feu et NAT</h3>
+            </div>
+            <p>Par défaut, PFsense bloque tout trafic entrant. Je configure dans <em>Firewall → Rules</em> les règles nécessaires : autorisation du trafic <strong>inter-VLAN</strong> contrôlé (les clients du VLAN 201 doivent joindre le DHCP/DNS du VLAN 200, mais pas accéder librement aux autres serveurs), autorisation du trafic sortant vers Internet (NAT automatique sur le WAN), blocage explicite des protocoles non utilisés. Je vérifie également les règles de <strong>NAT outbound</strong> pour s'assurer que les VLAN 200 et 201 sortent bien sur l'IP publique du WAN.</p>
+            <p class="screens-caption">Captures — règles Firewall, NAT outbound, autorisation inter-VLAN (10 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_046.png" alt="Règles de pare-feu et NAT — capture 1/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_047.png" alt="Règles de pare-feu et NAT — capture 2/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_048.png" alt="Règles de pare-feu et NAT — capture 3/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_049.png" alt="Règles de pare-feu et NAT — capture 4/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_050.png" alt="Règles de pare-feu et NAT — capture 5/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_051.png" alt="Règles de pare-feu et NAT — capture 6/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_052.png" alt="Règles de pare-feu et NAT — capture 7/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_053.png" alt="Règles de pare-feu et NAT — capture 8/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_054.png" alt="Règles de pare-feu et NAT — capture 9/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_055.png" alt="Règles de pare-feu et NAT — capture 10/10" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape7" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">7</div>
+                <h3 style="margin:0;">Installation et configuration du second PFsense (Lambda)</h3>
+            </div>
+            <p>Pour la <strong>haute disponibilité</strong>, je répète l'installation sur une seconde machine, <strong>Lambda</strong>. Je lui attribue une IP fixe différente sur le LAN (<code>192.168.100.251</code>) et configure les VLAN avec des IP propres (par convention : <code>.249</code> sur les deux VLAN pour Lambda, <code>.250</code> restant l'IP de Alpha). Je m'assure que le hostname est unique et que les deux PFsense partagent les mêmes DNS et le même domaine.</p>
+            <p class="screens-caption">Captures — installation Lambda, configuration LAN/VLAN du secours (8 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_056.png" alt="Installation et configuration du second PFsense (Lambda) — capture 1/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_057.png" alt="Installation et configuration du second PFsense (Lambda) — capture 2/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_058.png" alt="Installation et configuration du second PFsense (Lambda) — capture 3/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_059.png" alt="Installation et configuration du second PFsense (Lambda) — capture 4/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_060.png" alt="Installation et configuration du second PFsense (Lambda) — capture 5/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_061.png" alt="Installation et configuration du second PFsense (Lambda) — capture 6/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_062.png" alt="Installation et configuration du second PFsense (Lambda) — capture 7/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_063.png" alt="Installation et configuration du second PFsense (Lambda) — capture 8/8" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape8" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">8</div>
+                <h3 style="margin:0;">Configuration CARP — haute disponibilité (HA)</h3>
+            </div>
+            <p>Le mécanisme <strong>CARP</strong> (Common Address Redundancy Protocol) permet de partager une IP virtuelle entre deux PFsense : si le maître tombe, le secours prend immédiatement l'IP. Dans <em>Firewall → Virtual IPs</em>, je crée trois VIP CARP — une par interface (LAN <code>192.168.100.1</code>, VLAN 200 et VLAN 201) — avec le même mot de passe et le même VHID sur les deux machines. Dans <em>System → High Availability Sync</em>, j'active la synchronisation XMLRPC entre Alpha (maître) et Lambda (secours) afin que toutes les règles, VLAN et configurations soient répliquées en temps réel. Lambda devient ainsi un miroir de Alpha.</p>
+            <p class="screens-caption">Captures — création des VIP CARP, synchronisation XMLRPC, statut HA (8 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_064.png" alt="Configuration CARP — haute disponibilité (HA) — capture 1/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_065.png" alt="Configuration CARP — haute disponibilité (HA) — capture 2/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_066.png" alt="Configuration CARP — haute disponibilité (HA) — capture 3/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_067.png" alt="Configuration CARP — haute disponibilité (HA) — capture 4/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_068.png" alt="Configuration CARP — haute disponibilité (HA) — capture 5/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_069.png" alt="Configuration CARP — haute disponibilité (HA) — capture 6/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_070.png" alt="Configuration CARP — haute disponibilité (HA) — capture 7/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_071.png" alt="Configuration CARP — haute disponibilité (HA) — capture 8/8" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape9" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">9</div>
+                <h3 style="margin:0;">Tests et vérifications</h3>
+            </div>
+            <p>Je valide la mise en service en faisant plusieurs tests : ping vers Internet depuis un client du VLAN 201, ping inter-VLAN contrôlé, vérification du basculement en éteignant Alpha (Lambda doit reprendre l'IP virtuelle CARP en quelques secondes), vérification de la synchronisation des règles depuis l'interface <em>Status → CARP</em>, et redémarrage de Alpha pour vérifier qu'il reprend automatiquement le rôle de maître à son retour.</p>
+            <p class="screens-caption">Captures — tests de bascule CARP, statut des interfaces, journaux (3 captures) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_072.png" alt="Tests et vérifications — capture 1/3" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_073.png" alt="Tests et vérifications — capture 2/3" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/pfsense/png_074.png" alt="Tests et vérifications — capture 3/3" loading="lazy"></figure>
             </div>
         </div>
 
-        <!-- SECTION 1 -->
-        <div class="content-block fade-in" id="contexte">
-            <h3>1. Contexte et cahier des charges</h3>
-            <p><em>Section à compléter — description du contexte, de la demande initiale et du cahier des charges du projet.</em></p>
+        <!-- BILAN -->
+        <div id="bilan" class="content-block fade-in">
+            <h3>Bilan et compétences mobilisées</h3>
+            <p>
+                Ce projet PFsense vient compléter naturellement le Projet 1 (Active Directory) : ensemble, ils
+                forment une infrastructure complète, sécurisée et résiliente. J'ai notamment consolidé les
+                compétences suivantes du référentiel SISR :
+            </p>
+            <ul>
+                <li><strong>Installer et configurer un pare-feu open-source</strong> (PFsense / FreeBSD) en environnement virtualisé.</li>
+                <li><strong>Segmenter un réseau</strong> par VLAN (norme 802.1Q, trunks, sous-interfaces).</li>
+                <li><strong>Définir une politique de filtrage</strong> (règles de pare-feu, NAT, contrôle inter-VLAN).</li>
+                <li><strong>Mettre en place la haute disponibilité</strong> avec CARP et synchronisation XMLRPC.</li>
+                <li><strong>Tester et documenter</strong> la solution (procédures, captures, scénarios de panne).</li>
+            </ul>
+            <p>
+                Les tests finaux ont validé : un client du VLAN 201 sort sur Internet via le NAT d'Alpha,
+                Lambda reprend l'IP CARP <code>192.168.100.1</code> en quelques secondes lorsque Alpha est éteinte,
+                la synchronisation XMLRPC est fonctionnelle (toute règle créée sur Alpha apparaît immédiatement
+                sur Lambda) et le routage inter-VLAN respecte la politique définie.
+            </p>
+            <a href="epreuve6.html" class="back-link">← Retour aux projets de l'épreuve E6</a>
         </div>
-
-        <!-- SECTION 2 -->
-        <div class="content-block fade-in" id="objectifs">
-            <h3>2. Objectifs du projet</h3>
-            <p><em>Section à compléter — objectifs fonctionnels et techniques à atteindre.</em></p>
-        </div>
-
-        <!-- SECTION 3 -->
-        <div class="content-block fade-in" id="architecture">
-            <h3>3. Architecture et choix techniques</h3>
-            <p><em>Section à compléter — schéma d'architecture, technologies retenues et justification des choix.</em></p>
-        </div>
-
-        <!-- SECTION 4 -->
-        <div class="content-block fade-in" id="mise-en-oeuvre">
-            <h3>4. Mise en œuvre</h3>
-            <p><em>Section à compléter — étapes détaillées de réalisation, captures d'écran et extraits de configuration.</em></p>
-        </div>
-
-        <!-- SECTION 5 -->
-        <div class="content-block fade-in" id="tests">
-            <h3>5. Tests et validation</h3>
-            <p><em>Section à compléter — scénarios de test, résultats obtenus et procédure de recette.</em></p>
-        </div>
-
-        <!-- SECTION 6 -->
-        <div class="content-block fade-in" id="bilan">
-            <h3>6. Bilan et compétences acquises</h3>
-            <p><em>Section à compléter — retour d'expérience, difficultés surmontées et compétences SISR mobilisées.</em></p>
-        </div>
-
-        <!-- SECTION 7 -->
-        <div class="content-block fade-in" id="annexes">
-            <h3>7. Annexes</h3>
-            <p><em>Section à compléter — documents complémentaires, schémas, fichiers de configuration et liens externes.</em></p>
-        </div>
-
-        <a href="epreuve6.html" class="back-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-            Retour aux projets
-        </a>
 
     </div>
 </section>
+
+<!-- Lightbox pour les captures -->
+<div id="proc-lightbox" class="proc-lightbox" aria-hidden="true">
+    <button class="proc-lightbox-close" aria-label="Fermer">&times;</button>
+    <img id="proc-lightbox-img" src="" alt="">
+</div>
 
 <footer class="footer">
     <div class="container">

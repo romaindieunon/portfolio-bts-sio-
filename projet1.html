@@ -93,9 +93,12 @@
     <div class="container">
 
         <div class="proj-meta fade-in">
-            <div class="proj-meta-item"><span>Domaine</span><strong>beta.btssio.rd</strong></div>
-            <div class="proj-meta-item"><span>NetBIOS</span><strong>BTSSIO-RD</strong></div>
-            <div class="proj-meta-item"><span>Réseau</span><strong>192.168.201.0/24</strong></div>
+            <div class="proj-meta-item"><span>Domaine</span><strong>btssio.rd</strong></div>
+            <div class="proj-meta-item"><span>NetBIOS</span><strong>BTSSIO</strong></div>
+            <div class="proj-meta-item"><span>VLAN serveur</span><strong>192.168.200.0/24</strong></div>
+            <div class="proj-meta-item"><span>VLAN client</span><strong>192.168.201.0/24</strong></div>
+            <div class="proj-meta-item"><span>Beta (DC1)</span><strong>192.168.200.201</strong></div>
+            <div class="proj-meta-item"><span>Delta (DC2)</span><strong>192.168.200.202</strong></div>
             <div class="proj-meta-item"><span>Systèmes</span><strong>Windows Server 2022</strong></div>
             <div class="proj-meta-item"><span>Rôles</span><strong>AD DS · DNS · DHCP</strong></div>
             <div class="proj-meta-item"><span>Haute dispo.</span><strong>2 DC + DHCP Failover</strong></div>
@@ -145,18 +148,64 @@
         <!-- ARCHITECTURE -->
         <div id="architecture" class="content-block fade-in">
             <h3>2. Architecture réseau cible</h3>
-            <p>L'infrastructure repose sur un unique réseau local segmenté de la manière suivante :</p>
-            <ul>
-                <li><strong>Beta</strong> — contrôleur de domaine principal, DNS et DHCP — <code>192.168.201.1</code></li>
-                <li><strong>Delta</strong> — contrôleur de domaine secondaire, DNS et DHCP partenaire — <code>192.168.201.2</code></li>
-                <li><strong>Passerelle / pare-feu</strong> — <code>192.168.201.250</code></li>
-                <li><strong>Plage DHCP clients</strong> — <code>192.168.201.10</code> → <code>192.168.201.200</code></li>
-                <li><strong>Domaine AD</strong> — <code>beta.btssio.rd</code> (NetBIOS : <code>BTSSIO-RD</code>)</li>
-            </ul>
             <p>
-                Les deux contrôleurs répliquent automatiquement la base AD. Le DHCP fonctionne en mode
-                <em>équilibrage de charge</em> : les deux serveurs distribuent des baux à 50 / 50, et en cas de
-                panne, l'un prend 100 % de la charge sans interruption.
+                L'infrastructure globale du projet s'articule autour de deux pare-feu <strong>PFsense</strong>
+                redondés (traités en détail dans le Projet 2), d'un switch Cisco <strong>Theta</strong> et de
+                deux <strong>VLAN</strong> segmentant le trafic serveur et le trafic client. Le schéma
+                ci-dessous récapitule l'ensemble (commun aux deux projets) :
+            </p>
+            <figure class="proc-screen" style="max-width: 900px; margin: 1.5rem auto;">
+                <img src="assets/projets/schema-reseau.png" alt="Schéma réseau global — VLAN, PFsense, switch Theta, serveurs et clients" style="width:100%; height:auto; cursor: zoom-in;">
+                <figcaption style="text-align:center; font-style:italic; color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">
+                    Schéma réseau global du projet (communs aux Projet 1 et Projet 2). Cliquer pour agrandir.
+                </figcaption>
+            </figure>
+
+            <h4 style="margin-top:1.5rem;">Pare-feu — sortie Internet (LAN BTSSIO 192.168.100.0/24)</h4>
+            <ul>
+                <li><strong>Alpha</strong> — PFsense principal : LAN <code>192.168.100.250</code>, VLAN 200 <code>192.168.200.250</code>, VLAN 201 <code>192.168.201.250</code>. Rôle : pare-feu, routage NAT, inter-VLAN.</li>
+                <li><strong>Lambda</strong> — PFsense de secours : LAN <code>192.168.100.251</code>. Prend le relais automatiquement en cas de panne.</li>
+                <li><strong>IP virtuelle (CARP)</strong> : <code>192.168.100.1</code> — point d'entrée unique vue des clients.</li>
+            </ul>
+
+            <h4 style="margin-top:1.5rem;">Switch Cisco — Theta</h4>
+            <ul>
+                <li>Ports <code>Fa0/1-12</code> : VLAN 200 (serveurs).</li>
+                <li>Ports <code>Fa0/13-22</code> : VLAN 201 (clients).</li>
+                <li>Ports <code>Fa0/23-24</code> et <code>Gi0/1-2</code> : trunks vers les PFsense.</li>
+            </ul>
+
+            <h4 style="margin-top:1.5rem;">VLAN 200 — Serveurs (192.168.200.0/24)</h4>
+            <ul>
+                <li><strong>Beta</strong> — <code>192.168.200.201</code> — <strong>AD DS, DNS, DHCP</strong> (DC principal) — <em>périmètre de ce projet</em>.</li>
+                <li><strong>Delta</strong> — <code>192.168.200.202</code> — <strong>AD DS, DNS, DHCP</strong> (DC secondaire, DHCP partenaire) — <em>périmètre de ce projet</em>.</li>
+                <li><strong>Epsilon</strong> — <code>192.168.200.203</code> — GLPI (gestion de parc).</li>
+                <li><strong>Kappa</strong> — <code>192.168.200.204</code> — TrueNAS (stockage).</li>
+                <li><strong>Gamma</strong> — <code>192.168.200.211</code> — Proxmox (hyperviseur hébergeant les VM).</li>
+            </ul>
+
+            <h4 style="margin-top:1.5rem;">VLAN 201 — Clients (192.168.201.0/24)</h4>
+            <ul>
+                <li><strong>ETA</strong> — borne Wi-Fi en IP fixe : <code>192.168.201.201</code> (exclue de la plage DHCP).</li>
+                <li><strong>ZET-01</strong> — poste client, IP <code>192.168.201.202</code> attribuée par <em>réservation DHCP</em> sur son adresse MAC.</li>
+                <li><strong>ZET-02</strong> — poste client (IP libre obtenue dans la plage DHCP).</li>
+                <li>Plage DHCP distribuée par Beta/Delta : <code>192.168.201.10</code> → <code>192.168.201.249</code>.</li>
+                <li>Exclusion DHCP : <code>192.168.201.201</code> (réservée à la borne Wi-Fi en IP fixe).</li>
+                <li>Réservations DHCP par MAC : <code>192.168.201.202</code> = ZET-01.</li>
+                <li>Passerelle par défaut : <code>192.168.201.250</code> (interface VLAN 201 d'Alpha).</li>
+            </ul>
+
+            <h4 style="margin-top:1.5rem;">Règles de nommage (norme RFC 1178)</h4>
+            <ul>
+                <li><strong>Serveurs</strong> : un nom unique, généralement sous un même thème (lettres grecques dans notre cas : Alpha, Beta, Gamma, Delta, Epsilon, Theta, Kappa, Lambda).</li>
+                <li><strong>Postes clients</strong> : 3 premières lettres du nom de l'entreprise + numéro du PC (ex. <code>ZET-01</code>).</li>
+                <li><strong>Nom de domaine AD</strong> : <code>btssio.rd</code> (NetBIOS <code>BTSSIO</code>).</li>
+            </ul>
+
+            <p style="margin-top:1.5rem;">
+                Les deux contrôleurs Beta et Delta répliquent automatiquement la base AD. Le DHCP fonctionne en
+                mode <em>équilibrage de charge</em> (50 / 50) : chaque serveur distribue la moitié des baux du
+                VLAN 201 ; en cas de panne, l'autre prend 100 % de la charge sans interruption pour les clients.
             </p>
         </div>
 
@@ -177,7 +226,7 @@
                 <div class="proc-step-number">1</div>
                 <h3 style="margin:0;">Préparation du premier serveur (Beta)</h3>
             </div>
-            <p>Avant d'installer le moindre rôle, il faut préparer la machine qui deviendra le contrôleur de domaine principal. Je renomme le serveur « Beta » via Gestionnaire de serveur, je lui attribue une adresse IP fixe dans le réseau 192.168.201.0/24 (Beta = .1, passerelle = .250) et je fixe son serveur DNS préféré sur lui-même (127.0.0.1). Cette étape est critique : un DC change très mal d'adresse ou de nom une fois promu.</p>
+            <p>Avant d'installer le moindre rôle, il faut préparer la machine qui deviendra le contrôleur de domaine principal. Je renomme le serveur en <strong>Beta</strong> via Gestionnaire de serveur, je lui attribue une adresse IP fixe dans le <strong>VLAN 200 (serveurs)</strong> — <code>192.168.200.201</code>, masque <code>/24</code>, passerelle <code>192.168.200.250</code> (interface VLAN 200 d'Alpha) — et je fixe son serveur DNS préféré sur lui-même (<code>127.0.0.1</code>). Cette étape est critique : un DC change très mal d'adresse ou de nom une fois promu.</p>
             <p class="screens-caption">Captures — configuration IP de Beta, renommage et redémarrage (10 captures) :</p>
             <div class="proc-screens">
                 <figure class="proc-screen"><img src="assets/projets/ad/png_000.png" alt="Préparation du premier serveur (Beta) — capture 1/10" loading="lazy"></figure>
@@ -218,29 +267,29 @@
         <div id="etape3" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">3</div>
-                <h3 style="margin:0;">Promotion de Beta et création de la forêt beta.btssio.rd</h3>
+                <h3 style="margin:0;">Promotion de Beta et création de la forêt btssio.rd</h3>
             </div>
-            <p>L'icône de notification du Gestionnaire de serveur propose « Promouvoir ce serveur en contrôleur de domaine ». Je choisis <strong>Ajouter une nouvelle forêt</strong> avec le nom de domaine racine <code>beta.btssio.rd</code>. Je laisse les niveaux fonctionnels en Windows Server 2016 (par défaut), je coche bien <em>Serveur DNS</em> et je définis le mot de passe DSRM (restauration des services d'annuaire). Le nom NetBIOS <strong>BTSSIO-RD</strong> est généré automatiquement. L'assistant effectue les vérifications de prérequis puis redémarre la machine : Beta est désormais DC.</p>
+            <p>L'icône de notification du Gestionnaire de serveur propose « Promouvoir ce serveur en contrôleur de domaine ». Je choisis <strong>Ajouter une nouvelle forêt</strong> avec le nom de domaine racine <code>btssio.rd</code>. Je laisse les niveaux fonctionnels en Windows Server 2016 (par défaut), je coche bien <em>Serveur DNS</em> et je définis le mot de passe DSRM (restauration des services d'annuaire). Le nom NetBIOS <strong>BTSSIO</strong> est généré automatiquement. L'assistant effectue les vérifications de prérequis puis redémarre la machine : Beta est désormais contrôleur de domaine de <code>btssio.rd</code>.</p>
             <p class="screens-caption">Captures — assistant de promotion, choix de la forêt, niveaux fonctionnels, prérequis (18 captures) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_023.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 1/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_024.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 2/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_025.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 3/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_026.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 4/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_027.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 5/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_028.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 6/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_029.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 7/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_030.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 8/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_031.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 9/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_032.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 10/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_033.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 11/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_034.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 12/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_035.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 13/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_036.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 14/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_037.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 15/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_038.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 16/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_039.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 17/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_040.png" alt="Promotion de Beta et création de la forêt beta.btssio.rd — capture 18/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_023.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 1/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_024.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 2/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_025.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 3/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_026.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 4/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_027.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 5/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_028.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 6/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_029.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 7/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_030.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 8/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_031.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 9/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_032.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 10/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_033.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 11/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_034.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 12/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_035.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 13/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_036.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 14/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_037.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 15/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_038.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 16/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_039.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 17/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/png_040.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 18/18" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape4" class="proc-step fade-in">
@@ -248,7 +297,8 @@
                 <div class="proc-step-number">4</div>
                 <h3 style="margin:0;">Installation et configuration du serveur DHCP (étendue principale)</h3>
             </div>
-            <p>Après la promotion, je termine la configuration post-déploiement du rôle DHCP (autorisation dans l'AD avec un compte de l'administrateur du domaine). Je crée ensuite une <strong>nouvelle étendue</strong> couvrant le réseau 192.168.201.10 → 192.168.201.200 (masque /24). Je renseigne les options standard : passerelle par défaut (<code>192.168.201.250</code>), serveur DNS (<code>192.168.201.1</code> = Beta) et nom de domaine (<code>beta.btssio.rd</code>). J'active l'étendue à la fin de l'assistant.</p>
+            <p>Après la promotion, je termine la configuration post-déploiement du rôle DHCP (autorisation dans l'AD avec un compte de l'administrateur du domaine). Le DHCP est hébergé dans le VLAN 200 (sur Beta) mais distribue les baux aux postes du <strong>VLAN 201 (clients)</strong> grâce au relais inter-VLAN assuré par PFsense. Je crée donc une <strong>nouvelle étendue</strong> couvrant <code>192.168.201.10</code> → <code>192.168.201.249</code> (masque <code>/24</code>). Je renseigne les options standard : passerelle par défaut <code>192.168.201.250</code> (interface VLAN 201 d'Alpha), serveur DNS <code>192.168.200.201</code> (Beta) et nom de domaine <code>btssio.rd</code>. J'active l'étendue à la fin de l'assistant.</p>
+            <p>Pour intégrer la <strong>borne Wi-Fi ETA</strong> en IP fixe (<code>192.168.201.201</code>) sans risquer de conflit, j'ajoute une <em>exclusion</em> de cette adresse dans l'étendue (assistant <em>Ajout d'exclusions et de retard</em>, IP de début = <code>192.168.201.201</code>, IP de fin laissée vide = exclusion d'une seule adresse). Je crée également une <em>réservation DHCP</em> pour le poste <strong>ZET-01</strong> liée à son adresse MAC <code>74-56-3C-0F-2A-CE</code> avec l'IP <code>192.168.201.202</code> et le nom <code>ZET-01.BTSSIO.RD</code> (type pris en charge : « Les deux »).</p>
             <p class="screens-caption">Captures — création de l'étendue DHCP, plage d'adresses, options de l'étendue (14 captures) :</p>
             <div class="proc-screens">
                 <figure class="proc-screen"><img src="assets/projets/ad/png_041.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 1/14" loading="lazy"></figure>
@@ -272,7 +322,7 @@
                 <div class="proc-step-number">5</div>
                 <h3 style="margin:0;">Configuration du DNS et zones de recherche inversée</h3>
             </div>
-            <p>Le DNS a été installé en même temps qu'AD DS, une zone directe <code>beta.btssio.rd</code> existe donc déjà. Je crée en plus une <strong>zone de recherche inversée IPv4</strong> pour 192.168.201.0/24 afin que les requêtes « PTR » (IP → nom) fonctionnent correctement. J'ajoute quelques enregistrements <em>A</em> et <em>PTR</em> manuels pour valider le bon fonctionnement et je teste la résolution avec <code>nslookup</code>.</p>
+            <p>Le DNS a été installé en même temps qu'AD DS, une zone directe <code>btssio.rd</code> existe donc déjà. Je crée en plus deux <strong>zones de recherche inversée IPv4</strong> — une pour le VLAN 200 (<code>192.168.200.0/24</code>) et une pour le VLAN 201 (<code>192.168.201.0/24</code>) — afin que les requêtes « PTR » (IP → nom) fonctionnent dans les deux sous-réseaux. J'ajoute quelques enregistrements <em>A</em> et <em>PTR</em> manuels pour valider le bon fonctionnement et je teste la résolution avec <code>nslookup</code> depuis un client du VLAN 201.</p>
             <p class="screens-caption">Captures — gestionnaire DNS, assistant de zone inversée, tests de résolution (14 captures) :</p>
             <div class="proc-screens">
                 <figure class="proc-screen"><img src="assets/projets/ad/png_055.png" alt="Configuration du DNS et zones de recherche inversée — capture 1/14" loading="lazy"></figure>
@@ -326,7 +376,7 @@
                 <div class="proc-step-number">7</div>
                 <h3 style="margin:0;">Ajout d'un second contrôleur de domaine (Delta)</h3>
             </div>
-            <p>Pour la <strong>haute disponibilité</strong>, j'installe un second serveur, <strong>Delta</strong>, dans le même réseau (192.168.201.2). Je configure son IP fixe, je le joins au domaine <code>beta.btssio.rd</code> puis je l'élève en DC supplémentaire via l'assistant « Promouvoir ce serveur en contrôleur de domaine » → <em>Ajouter un contrôleur de domaine à un domaine existant</em>. Je coche <strong>DNS</strong> et <strong>catalogue global</strong> de manière à ce que Delta puisse assurer toutes les fonctions en cas de panne de Beta. La réplication AD se met en place automatiquement.</p>
+            <p>Pour la <strong>haute disponibilité</strong>, j'installe un second serveur, <strong>Delta</strong>, dans le <strong>VLAN 200</strong> avec l'IP fixe <code>192.168.200.202</code> (passerelle <code>192.168.200.250</code>, DNS préféré <code>192.168.200.201</code> qui pointe vers Beta). Je le joins au domaine <code>btssio.rd</code> puis je l'élève en DC supplémentaire via l'assistant « Promouvoir ce serveur en contrôleur de domaine » → <em>Ajouter un contrôleur de domaine à un domaine existant</em>. Je coche <strong>DNS</strong> et <strong>catalogue global</strong> de manière à ce que Delta puisse assurer toutes les fonctions en cas de panne de Beta. La réplication AD se met en place automatiquement entre les deux DC.</p>
             <p class="screens-caption">Captures — jonction au domaine, promotion de Delta, réplication AD (20 captures) :</p>
             <div class="proc-screens">
                 <figure class="proc-screen"><img src="assets/projets/ad/png_089.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 1/20" loading="lazy"></figure>
@@ -411,7 +461,7 @@
                 <div class="proc-step-number">10</div>
                 <h3 style="margin:0;">Tests et vérifications finaux</h3>
             </div>
-            <p>Pour valider l'infrastructure, j'effectue une série de tests : jonction d'un poste client Windows 10 au domaine <code>beta.btssio.rd</code>, ouverture de session avec un utilisateur AD, vérification que la GPO s'applique, obtention d'une adresse IP via DHCP, résolution DNS directe et inverse, arrêt volontaire du DC Beta pour vérifier que Delta prend le relais (DHCP + authentification) et enfin contrôle de la réplication AD avec <code>repadmin /replsummary</code>.</p>
+            <p>Pour valider l'infrastructure, j'effectue une série de tests depuis un poste client situé dans le <strong>VLAN 201</strong> : jonction du poste Windows 10 au domaine <code>btssio.rd</code>, ouverture de session avec un utilisateur AD, vérification que les GPO s'appliquent, obtention d'une adresse IP via DHCP. Une commande <code>ipconfig /all</code> sur le poste <strong>ZET-01</strong> confirme la cohérence complète de la configuration : suffixe DNS <code>BTSSIO.RD</code>, adresse IPv4 <code>192.168.201.202</code> (la réservation DHCP est bien appliquée à la MAC <code>74-56-3C-0F-2A-CE</code>), passerelle <code>192.168.201.250</code>, serveur DHCP <code>192.168.200.201</code> (Beta) et serveurs DNS <code>192.168.200.201</code> + <code>192.168.200.202</code> (Beta + Delta). Je teste aussi la résolution DNS directe et inverse (<code>nslookup beta.btssio.rd</code>, <code>nslookup 192.168.200.201</code>), j'éteins volontairement Beta pour vérifier que Delta prend le relais (DHCP + authentification) sans interruption pour les clients, puis je contrôle la réplication AD avec <code>repadmin /replsummary</code>.</p>
             <p class="screens-caption">Captures — jonction d'un client, tests DNS/DHCP, bascule sur Delta, réplication (11 captures) :</p>
             <div class="proc-screens">
                 <figure class="proc-screen"><img src="assets/projets/ad/png_144.png" alt="Tests et vérifications finaux — capture 1/11" loading="lazy"></figure>
