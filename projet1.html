@@ -11,55 +11,19 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230ea5e9'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' fill='white' font-family='Inter,sans-serif' font-size='14' font-weight='700'%3ERD%3C/text%3E%3C/svg%3E">
     <style>
-        .proj-toc {
-            background: var(--bg-alt);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 1.5rem 1.75rem;
-            margin: 1.5rem 0 2rem;
-        }
+        .proj-toc { background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem 1.75rem; margin: 1.5rem 0 2rem; }
         .proj-toc h4 { margin: 0 0 0.75rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
         .proj-toc ol { margin: 0; padding-left: 1.25rem; }
         .proj-toc ol li { margin: 0.35rem 0; }
         .proj-toc a { color: var(--primary); text-decoration: none; }
         .proj-toc a:hover { text-decoration: underline; }
-        .proj-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .proj-meta-item {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 1rem 1.25rem;
-        }
-        .proj-meta-item span {
-            display: block;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            margin-bottom: 0.25rem;
-        }
+        .proj-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .proj-meta-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; }
+        .proj-meta-item span { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.25rem; }
         .proj-meta-item strong { font-size: 1rem; color: var(--text); }
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            margin-top: 2rem;
-        }
+        .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--primary); text-decoration: none; font-weight: 500; margin-top: 2rem; }
         .back-link:hover { text-decoration: underline; }
-        .screens-caption {
-            color: var(--text-muted);
-            font-style: italic;
-            font-size: 0.9rem;
-            margin: 0.25rem 0 0.85rem;
-        }
+        .screens-caption { color: var(--text-muted); font-style: italic; font-size: 0.9rem; margin: 0.25rem 0 0.85rem; }
     </style>
 </head>
 <body>
@@ -85,7 +49,7 @@
     <div class="container">
         <p class="breadcrumb"><a href="index.html">Accueil</a> / <a href="epreuve6.html">Épreuve 6</a> / Projet 1</p>
         <h1>Projet 1 — Active Directory, DNS &amp; DHCP</h1>
-        <p>Déploiement d'une infrastructure Active Directory complète avec deux contrôleurs de domaine, basculement DHCP, zones DNS, OU, utilisateurs et stratégies de groupe sur Windows Server 2022.</p>
+        <p>Déploiement d'une infrastructure Active Directory complète avec deux contrôleurs de domaine, basculement DHCP, zones DNS, OU, utilisateurs, GPO et déploiement de l'agent GLPI.</p>
     </div>
 </section>
 
@@ -101,51 +65,47 @@
             <div class="proj-meta-item"><span>Delta (DC2)</span><strong>192.168.200.202</strong></div>
             <div class="proj-meta-item"><span>Systèmes</span><strong>Windows Server 2022</strong></div>
             <div class="proj-meta-item"><span>Rôles</span><strong>AD DS · DNS · DHCP</strong></div>
-            <div class="proj-meta-item"><span>Haute dispo.</span><strong>2 DC + DHCP Failover</strong></div>
+            <div class="proj-meta-item"><span>Haute dispo.</span><strong>2 DC + DHCP Hot Standby</strong></div>
         </div>
 
-        <!-- SOMMAIRE -->
         <div class="proj-toc fade-in">
             <h4>Sommaire</h4>
             <ol>
                 <li><a href="#contexte">Contexte et objectifs</a></li>
                 <li><a href="#architecture">Architecture réseau cible</a></li>
                 <li><a href="#environnement">Environnement technique</a></li>
-                <li><a href="#etape4">Étape 1 — Préparation de Beta</a></li>
-                <li><a href="#etape5">Étape 2 — Installation des rôles</a></li>
-                <li><a href="#etape6">Étape 3 — Promotion en contrôleur de domaine</a></li>
-                <li><a href="#etape7">Étape 4 — Configuration du DHCP</a></li>
-                <li><a href="#etape8">Étape 5 — Configuration du DNS</a></li>
-                <li><a href="#etape9">Étape 6 — OU, utilisateurs et groupes</a></li>
-                <li><a href="#etape10">Étape 7 — Second contrôleur (Delta)</a></li>
-                <li><a href="#etape11">Étape 8 — Basculement DHCP</a></li>
-                <li><a href="#etape12">Étape 9 — Stratégies de groupe</a></li>
-                <li><a href="#etape13">Étape 10 — Tests et vérifications</a></li>
+                <li><a href="#etape1">Étape 1 — Préparation de Beta et installation des rôles</a></li>
+                <li><a href="#etape2">Étape 2 — Promotion en DC, création de la forêt</a></li>
+                <li><a href="#etape3">Étape 3 — Configuration du DHCP, exclusion et réservation</a></li>
+                <li><a href="#etape4">Étape 4 — Vérification IP des clients ZET</a></li>
+                <li><a href="#etape5">Étape 5 — Configuration du DNS et zones inversées</a></li>
+                <li><a href="#etape6">Étape 6 — OU, utilisateurs, groupes (GDL) et partages</a></li>
+                <li><a href="#etape7">Étape 7 — Ajout du second DC (Delta)</a></li>
+                <li><a href="#etape8">Étape 8 — Basculement DHCP Hot Standby</a></li>
+                <li><a href="#etape9">Étape 9 — Horaires d'accès et intégration des postes</a></li>
+                <li><a href="#etape10">Étape 10 — GPO de sécurité du domaine</a></li>
+                <li><a href="#etape11">Étape 11 — GPO utilisateurs (Panneau / CMD / PowerShell)</a></li>
+                <li><a href="#etape12">Étape 12 — GPO ordinateurs (Pare-feu / WU / USB / autorun)</a></li>
+                <li><a href="#etape13">Étape 13 — GPO de déploiement de l'agent GLPI</a></li>
                 <li><a href="#bilan">Bilan et compétences mobilisées</a></li>
             </ol>
         </div>
 
-        <!-- CONTEXTE -->
         <div id="contexte" class="content-block fade-in">
             <h3>1. Contexte et objectifs</h3>
             <p>
                 Dans le cadre de mon BTS SIO option SISR, j'ai mené le déploiement complet d'une infrastructure
                 <strong>Active Directory</strong> destinée à simuler le système d'information d'un établissement
-                scolaire (salle de BTS SIO, professeurs et élèves). Le cahier des charges fixait trois objectifs :
+                scolaire (salle de BTS SIO, professeurs et élèves). Le cahier des charges fixait quatre objectifs :
             </p>
             <ul>
-                <li><strong>Centraliser</strong> la gestion des comptes utilisateurs et des postes clients via un annuaire AD.</li>
-                <li><strong>Automatiser</strong> la distribution des paramètres réseau (IP, passerelle, DNS) avec un serveur DHCP.</li>
-                <li><strong>Assurer la continuité de service</strong> grâce à deux contrôleurs de domaine et un basculement DHCP.</li>
+                <li><strong>Centraliser</strong> la gestion des comptes utilisateurs et des postes via un annuaire AD.</li>
+                <li><strong>Automatiser</strong> la distribution des paramètres réseau (IP, passerelle, DNS) avec DHCP.</li>
+                <li><strong>Sécuriser</strong> le système d'information par des stratégies de groupe (GPO).</li>
+                <li><strong>Assurer la continuité de service</strong> grâce à deux DC et au basculement DHCP.</li>
             </ul>
-            <p>
-                Le projet couvre l'ensemble du cycle : installation, configuration, mise en production, tests et
-                documentation. Il mobilise directement les compétences du référentiel SISR en administration des
-                systèmes et des réseaux.
-            </p>
         </div>
 
-        <!-- ARCHITECTURE -->
         <div id="architecture" class="content-block fade-in">
             <h3>2. Architecture réseau cible</h3>
             <p>
@@ -157,15 +117,15 @@
             <figure class="proc-screen" style="max-width: 900px; margin: 1.5rem auto;">
                 <img src="assets/projets/schema-reseau.png" alt="Schéma réseau global — VLAN, PFsense, switch Theta, serveurs et clients" style="width:100%; height:auto; cursor: zoom-in;">
                 <figcaption style="text-align:center; font-style:italic; color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">
-                    Schéma réseau global du projet (communs aux Projet 1 et Projet 2). Cliquer pour agrandir.
+                    Schéma réseau global du projet (commun aux Projet 1 et Projet 2). Cliquer pour agrandir.
                 </figcaption>
             </figure>
 
             <h4 style="margin-top:1.5rem;">Pare-feu — sortie Internet (LAN BTSSIO 192.168.100.0/24)</h4>
             <ul>
                 <li><strong>Alpha</strong> — PFsense principal : LAN <code>192.168.100.250</code>, VLAN 200 <code>192.168.200.250</code>, VLAN 201 <code>192.168.201.250</code>. Rôle : pare-feu, routage NAT, inter-VLAN.</li>
-                <li><strong>Lambda</strong> — PFsense de secours : LAN <code>192.168.100.251</code>. Prend le relais automatiquement en cas de panne.</li>
-                <li><strong>IP virtuelle (CARP)</strong> : <code>192.168.100.1</code> — point d'entrée unique vue des clients.</li>
+                <li><strong>Lambda</strong> — PFsense de secours : LAN <code>192.168.100.251</code>. Prend le relais en cas de panne.</li>
+                <li><strong>IP virtuelle (CARP)</strong> : <code>192.168.100.1</code> — point d'entrée unique côté clients.</li>
             </ul>
 
             <h4 style="margin-top:1.5rem;">Switch Cisco — Theta</h4>
@@ -189,314 +149,341 @@
                 <li><strong>ETA</strong> — borne Wi-Fi en IP fixe : <code>192.168.201.201</code> (exclue de la plage DHCP).</li>
                 <li><strong>ZET-01</strong> — poste client, IP <code>192.168.201.202</code> attribuée par <em>réservation DHCP</em> sur son adresse MAC.</li>
                 <li><strong>ZET-02</strong> — poste client (IP libre obtenue dans la plage DHCP).</li>
-                <li>Plage DHCP distribuée par Beta/Delta : <code>192.168.201.10</code> → <code>192.168.201.249</code>.</li>
-                <li>Exclusion DHCP : <code>192.168.201.201</code> (réservée à la borne Wi-Fi en IP fixe).</li>
-                <li>Réservations DHCP par MAC : <code>192.168.201.202</code> = ZET-01.</li>
+                <li>Plage DHCP distribuée par Beta (Delta en Hot Standby).</li>
                 <li>Passerelle par défaut : <code>192.168.201.250</code> (interface VLAN 201 d'Alpha).</li>
             </ul>
 
             <h4 style="margin-top:1.5rem;">Règles de nommage (norme RFC 1178)</h4>
             <ul>
-                <li><strong>Serveurs</strong> : un nom unique, généralement sous un même thème (lettres grecques dans notre cas : Alpha, Beta, Gamma, Delta, Epsilon, Theta, Kappa, Lambda).</li>
+                <li><strong>Serveurs</strong> : un nom unique sous un thème commun (lettres grecques : Alpha, Beta, Gamma, Delta, Epsilon, Theta, Kappa, Lambda).</li>
                 <li><strong>Postes clients</strong> : 3 premières lettres du nom de l'entreprise + numéro du PC (ex. <code>ZET-01</code>).</li>
                 <li><strong>Nom de domaine AD</strong> : <code>btssio.rd</code> (NetBIOS <code>BTSSIO</code>).</li>
             </ul>
 
             <p style="margin-top:1.5rem;">
-                Les deux contrôleurs Beta et Delta répliquent automatiquement la base AD. Le DHCP fonctionne en
-                mode <em>équilibrage de charge</em> (50 / 50) : chaque serveur distribue la moitié des baux du
-                VLAN 201 ; en cas de panne, l'autre prend 100 % de la charge sans interruption pour les clients.
+                Beta et Delta répliquent automatiquement la base AD. Le DHCP est configuré en mode
+                <em>Hot Standby</em> (actif / passif) : Beta distribue les baux du VLAN 201 et Delta reste en
+                attente. En cas de panne de Beta, Delta prend automatiquement le relais sans interruption
+                pour les clients.
             </p>
         </div>
 
-        <!-- ENVIRONNEMENT -->
         <div id="environnement" class="content-block fade-in">
             <h3>3. Environnement technique</h3>
             <ul>
-                <li>Hyperviseur : <strong>VMware Workstation</strong> (machines virtuelles isolées sur un même vSwitch).</li>
-                <li>OS serveur : <strong>Windows Server 2022 Standard (GUI)</strong> — 2 machines.</li>
-                <li>OS client de test : <strong>Windows 10 Pro</strong>.</li>
+                <li>Hyperviseur : <strong>Proxmox VE</strong> (hébergé sur le serveur Gamma — <code>192.168.200.211</code>) — héberge les VM serveurs.</li>
+                <li>OS serveur (virtualisés sous Proxmox) : <strong>Windows Server 2022 Standard (GUI)</strong> — Beta et Delta.</li>
+                <li>OS client (postes physiques, non virtualisés) : <strong>Windows 11 Pro</strong>.</li>
                 <li>Rôles installés : <strong>AD DS, DNS, DHCP</strong>.</li>
-                <li>Outils de gestion : Gestionnaire de serveur, Utilisateurs et ordinateurs AD, Gestion DHCP, Gestion DNS, Gestion de stratégie de groupe.</li>
+                <li>Outils de gestion : Gestionnaire de serveur, Utilisateurs et ordinateurs AD, Gestion DHCP, Gestion DNS, Gestion de stratégie de groupe, Centre d'administration AD.</li>
             </ul>
         </div>
 
         <div id="etape1" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">1</div>
-                <h3 style="margin:0;">Préparation du premier serveur (Beta)</h3>
+                <h3 style="margin:0;">Préparation de Beta et installation des rôles AD DS / DNS / DHCP</h3>
             </div>
-            <p>Avant d'installer le moindre rôle, il faut préparer la machine qui deviendra le contrôleur de domaine principal. Je renomme le serveur en <strong>Beta</strong> via Gestionnaire de serveur, je lui attribue une adresse IP fixe dans le <strong>VLAN 200 (serveurs)</strong> — <code>192.168.200.201</code>, masque <code>/24</code>, passerelle <code>192.168.200.250</code> (interface VLAN 200 d'Alpha) — et je fixe son serveur DNS préféré sur lui-même (<code>127.0.0.1</code>). Cette étape est critique : un DC change très mal d'adresse ou de nom une fois promu.</p>
-            <p class="screens-caption">Captures — configuration IP de Beta, renommage et redémarrage (10 captures) :</p>
+            <p>Je commence par créer le premier serveur que je nomme <strong>Beta</strong>. Je lui attribue son adresse IP fixe dans le VLAN 200 (<code>192.168.200.201</code>, masque <code>/24</code>, passerelle <code>192.168.200.250</code>) et je le mets à jour. Ensuite, depuis <em>Gestionnaire de serveur → Gérer → Ajout de rôles et de fonctionnalités</em>, je sélectionne les trois rôles <strong>AD DS</strong>, <strong>Serveur DNS</strong> et <strong>Serveur DHCP</strong> et je laisse l'assistant installer les binaires.</p>
+            <p class="screens-caption">Captures — préparation de Beta, assistant d'ajout de rôles AD DS / DNS / DHCP (11 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_000.png" alt="Préparation du premier serveur (Beta) — capture 1/10" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_001.png" alt="Préparation du premier serveur (Beta) — capture 2/10" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_002.png" alt="Préparation du premier serveur (Beta) — capture 3/10" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_003.png" alt="Préparation du premier serveur (Beta) — capture 4/10" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_004.png" alt="Préparation du premier serveur (Beta) — capture 5/10" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_005.png" alt="Préparation du premier serveur (Beta) — capture 6/10" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_006.png" alt="Préparation du premier serveur (Beta) — capture 7/10" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_007.png" alt="Préparation du premier serveur (Beta) — capture 8/10" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_008.png" alt="Préparation du premier serveur (Beta) — capture 9/10" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_009.png" alt="Préparation du premier serveur (Beta) — capture 10/10" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_000.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 1/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_001.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 2/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_002.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 3/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_003.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 4/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_004.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 5/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_005.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 6/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_006.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 7/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_007.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 8/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_008.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 9/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_009.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 10/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_010.jpg" alt="Préparation de Beta et installation des rôles AD DS / DNS / DHCP — 11/11" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape2" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">2</div>
-                <h3 style="margin:0;">Installation du rôle AD DS, DNS et DHCP sur Beta</h3>
+                <h3 style="margin:0;">Promotion de Beta en contrôleur de domaine — création de la forêt btssio.rd</h3>
             </div>
-            <p>Depuis Gestionnaire de serveur → « Ajouter des rôles et fonctionnalités », je sélectionne successivement <strong>Services AD DS</strong>, <strong>Serveur DNS</strong> et <strong>Serveur DHCP</strong>. L'assistant installe les binaires mais ne promeut pas encore la machine : c'est une étape séparée. Je vérifie en fin d'installation que les trois rôles apparaissent bien dans le tableau de bord.</p>
-            <p class="screens-caption">Captures — assistant d'ajout de rôles, sélection AD DS / DNS / DHCP (13 captures) :</p>
+            <p>Une fois les rôles installés, je promeus Beta en contrôleur de domaine. Sur le drapeau de notification du Gestionnaire de serveur, je clique sur <em>Promouvoir ce serveur en contrôleur de domaine</em>. Comme c'est une nouvelle installation, je choisis <strong>Ajouter une nouvelle forêt</strong> et je crée le nom de domaine racine <code>btssio.rd</code>. Je définis le mot de passe DSRM, je laisse cocher Serveur DNS, et je lance la promotion. À la fin, le serveur redémarre et je me connecte directement au domaine.</p>
+            <p class="screens-caption">Captures — assistant de promotion, création de la forêt btssio.rd, redémarrage (8 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_010.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 1/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_011.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 2/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_012.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 3/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_013.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 4/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_014.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 5/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_015.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 6/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_016.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 7/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_017.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 8/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_018.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 9/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_019.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 10/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_020.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 11/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_021.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 12/13" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_022.png" alt="Installation du rôle AD DS, DNS et DHCP sur Beta — capture 13/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_011.jpg" alt="Promotion de Beta en contrôleur de domaine — création de la forêt btssio.rd — 1/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_012.jpg" alt="Promotion de Beta en contrôleur de domaine — création de la forêt btssio.rd — 2/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_013.jpg" alt="Promotion de Beta en contrôleur de domaine — création de la forêt btssio.rd — 3/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_014.jpg" alt="Promotion de Beta en contrôleur de domaine — création de la forêt btssio.rd — 4/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_015.jpg" alt="Promotion de Beta en contrôleur de domaine — création de la forêt btssio.rd — 5/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_016.jpg" alt="Promotion de Beta en contrôleur de domaine — création de la forêt btssio.rd — 6/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_017.jpg" alt="Promotion de Beta en contrôleur de domaine — création de la forêt btssio.rd — 7/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_018.jpg" alt="Promotion de Beta en contrôleur de domaine — création de la forêt btssio.rd — 8/8" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape3" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">3</div>
-                <h3 style="margin:0;">Promotion de Beta et création de la forêt btssio.rd</h3>
+                <h3 style="margin:0;">Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01</h3>
             </div>
-            <p>L'icône de notification du Gestionnaire de serveur propose « Promouvoir ce serveur en contrôleur de domaine ». Je choisis <strong>Ajouter une nouvelle forêt</strong> avec le nom de domaine racine <code>btssio.rd</code>. Je laisse les niveaux fonctionnels en Windows Server 2016 (par défaut), je coche bien <em>Serveur DNS</em> et je définis le mot de passe DSRM (restauration des services d'annuaire). Le nom NetBIOS <strong>BTSSIO</strong> est généré automatiquement. L'assistant effectue les vérifications de prérequis puis redémarre la machine : Beta est désormais contrôleur de domaine de <code>btssio.rd</code>.</p>
-            <p class="screens-caption">Captures — assistant de promotion, choix de la forêt, niveaux fonctionnels, prérequis (18 captures) :</p>
+            <p>Je termine la configuration post-déploiement du rôle DHCP via le drapeau, puis je crée une <strong>nouvelle étendue</strong> dans <em>Outils → DHCP → IPv4 → clic droit → Nouvelle étendue</em> qui couvre toute la plage du VLAN 201 client. Je configure les options standard (passerelle <code>192.168.201.250</code>, DNS <code>192.168.200.201</code>, domaine <code>btssio.rd</code>). Comme la borne Wi-Fi <strong>ETA</strong> sera en IP fixe à <code>192.168.201.201</code>, j'ajoute une <em>exclusion</em> sur cette adresse pour éviter tout conflit. J'active l'étendue puis je crée une <em>réservation DHCP</em> pour le poste <strong>ZET-01</strong> sur sa MAC <code>74-56-3C-0F-2A-CE</code> à l'IP <code>192.168.201.202</code> afin qu'il prenne toujours la même IP.</p>
+            <p class="screens-caption">Captures — terminer la configuration, nouvelle étendue, exclusion .201, réservation ZET-01 (16 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_023.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 1/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_024.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 2/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_025.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 3/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_026.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 4/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_027.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 5/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_028.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 6/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_029.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 7/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_030.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 8/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_031.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 9/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_032.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 10/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_033.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 11/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_034.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 12/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_035.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 13/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_036.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 14/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_037.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 15/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_038.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 16/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_039.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 17/18" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_040.png" alt="Promotion de Beta et création de la forêt btssio.rd — capture 18/18" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_019.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 1/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_020.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 2/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_021.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 3/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_022.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 4/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_023.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 5/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_024.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 6/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_025.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 7/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_026.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 8/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_027.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 9/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_028.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 10/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_029.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 11/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_030.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 12/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_031.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 13/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_032.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 14/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_033.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 15/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_034.jpg" alt="Configuration du DHCP — étendue, exclusion borne Wi-Fi et réservation ZET-01 — 16/16" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape4" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">4</div>
-                <h3 style="margin:0;">Installation et configuration du serveur DHCP (étendue principale)</h3>
+                <h3 style="margin:0;">Vérification : ZET-01 et ZET-02 obtiennent bien leur IP</h3>
             </div>
-            <p>Après la promotion, je termine la configuration post-déploiement du rôle DHCP (autorisation dans l'AD avec un compte de l'administrateur du domaine). Le DHCP est hébergé dans le VLAN 200 (sur Beta) mais distribue les baux aux postes du <strong>VLAN 201 (clients)</strong> grâce au relais inter-VLAN assuré par PFsense. Je crée donc une <strong>nouvelle étendue</strong> couvrant <code>192.168.201.10</code> → <code>192.168.201.249</code> (masque <code>/24</code>). Je renseigne les options standard : passerelle par défaut <code>192.168.201.250</code> (interface VLAN 201 d'Alpha), serveur DNS <code>192.168.200.201</code> (Beta) et nom de domaine <code>btssio.rd</code>. J'active l'étendue à la fin de l'assistant.</p>
-            <p>Pour intégrer la <strong>borne Wi-Fi ETA</strong> en IP fixe (<code>192.168.201.201</code>) sans risquer de conflit, j'ajoute une <em>exclusion</em> de cette adresse dans l'étendue (assistant <em>Ajout d'exclusions et de retard</em>, IP de début = <code>192.168.201.201</code>, IP de fin laissée vide = exclusion d'une seule adresse). Je crée également une <em>réservation DHCP</em> pour le poste <strong>ZET-01</strong> liée à son adresse MAC <code>74-56-3C-0F-2A-CE</code> avec l'IP <code>192.168.201.202</code> et le nom <code>ZET-01.BTSSIO.RD</code> (type pris en charge : « Les deux »).</p>
-            <p class="screens-caption">Captures — création de l'étendue DHCP, plage d'adresses, options de l'étendue (14 captures) :</p>
+            <p>Pour valider la distribution DHCP, je remets l'IP des postes en automatique (et je vérifie que les serveurs DNS sont bien renseignés). Je lance ensuite un <code>ipconfig /all</code> sur ZET-01 et ZET-02 et je constate que ZET-01 récupère bien son IP réservée <code>192.168.201.202</code> et que ZET-02 obtient une IP libre dans la plage. Suffixe DNS <code>BTSSIO.RD</code>, passerelle <code>192.168.201.250</code>, serveur DHCP <code>192.168.200.201</code> (Beta), serveurs DNS <code>192.168.200.201</code> et plus tard <code>192.168.200.202</code> (Delta) — tout concorde.</p>
+            <p class="screens-caption">Captures — ipconfig /all sur ZET-01 et ZET-02 (2 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_041.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 1/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_042.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 2/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_043.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 3/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_044.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 4/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_045.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 5/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_046.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 6/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_047.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 7/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_048.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 8/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_049.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 9/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_050.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 10/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_051.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 11/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_052.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 12/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_053.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 13/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_054.png" alt="Installation et configuration du serveur DHCP (étendue principale) — capture 14/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_035.jpg" alt="Vérification : ZET-01 et ZET-02 obtiennent bien leur IP — 1/2" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_036.jpg" alt="Vérification : ZET-01 et ZET-02 obtiennent bien leur IP — 2/2" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape5" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">5</div>
-                <h3 style="margin:0;">Configuration du DNS et zones de recherche inversée</h3>
+                <h3 style="margin:0;">Configuration du DNS — zones de recherche inversée et enregistrements PTR</h3>
             </div>
-            <p>Le DNS a été installé en même temps qu'AD DS, une zone directe <code>btssio.rd</code> existe donc déjà. Je crée en plus deux <strong>zones de recherche inversée IPv4</strong> — une pour le VLAN 200 (<code>192.168.200.0/24</code>) et une pour le VLAN 201 (<code>192.168.201.0/24</code>) — afin que les requêtes « PTR » (IP → nom) fonctionnent dans les deux sous-réseaux. J'ajoute quelques enregistrements <em>A</em> et <em>PTR</em> manuels pour valider le bon fonctionnement et je teste la résolution avec <code>nslookup</code> depuis un client du VLAN 201.</p>
-            <p class="screens-caption">Captures — gestionnaire DNS, assistant de zone inversée, tests de résolution (14 captures) :</p>
+            <p>Le rôle DNS a été installé avec AD DS, donc la zone directe <code>btssio.rd</code> existe déjà. Je crée en plus deux <strong>zones de recherche inversée IPv4</strong> : une pour le réseau serveur <code>192.168.200.0/24</code> et une pour le réseau client <code>192.168.201.0/24</code>. Pour chaque zone, je passe par <em>Zones de recherche inversées → clic droit → Nouvelle zone</em>. Une fois les deux zones en place, je crée à la main les <em>pointeurs PTR</em> pour les serveurs et j'active la mise à jour automatique des PTR pour les clients DHCP : <em>DHCP → IPv4 → clic droit → Propriétés → onglet DNS</em> et je coche l'option de mise à jour dynamique.</p>
+            <p class="screens-caption">Captures — création des zones inversées, ajout des PTR, activation de la MAJ automatique DHCP→DNS (14 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_055.png" alt="Configuration du DNS et zones de recherche inversée — capture 1/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_056.png" alt="Configuration du DNS et zones de recherche inversée — capture 2/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_057.png" alt="Configuration du DNS et zones de recherche inversée — capture 3/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_058.png" alt="Configuration du DNS et zones de recherche inversée — capture 4/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_059.png" alt="Configuration du DNS et zones de recherche inversée — capture 5/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_060.png" alt="Configuration du DNS et zones de recherche inversée — capture 6/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_061.png" alt="Configuration du DNS et zones de recherche inversée — capture 7/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_062.png" alt="Configuration du DNS et zones de recherche inversée — capture 8/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_063.png" alt="Configuration du DNS et zones de recherche inversée — capture 9/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_064.png" alt="Configuration du DNS et zones de recherche inversée — capture 10/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_065.png" alt="Configuration du DNS et zones de recherche inversée — capture 11/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_066.png" alt="Configuration du DNS et zones de recherche inversée — capture 12/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_067.png" alt="Configuration du DNS et zones de recherche inversée — capture 13/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_068.png" alt="Configuration du DNS et zones de recherche inversée — capture 14/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_037.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 1/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_038.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 2/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_039.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 3/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_040.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 4/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_041.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 5/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_042.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 6/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_043.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 7/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_044.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 8/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_045.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 9/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_046.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 10/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_047.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 11/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_048.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 12/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_049.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 13/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_050.jpg" alt="Configuration du DNS — zones de recherche inversée et enregistrements PTR — 14/14" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape6" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">6</div>
-                <h3 style="margin:0;">Création des OU, utilisateurs et groupes Active Directory</h3>
+                <h3 style="margin:0;">Création des OU, utilisateurs, groupes (GDL) et partages</h3>
             </div>
-            <p>Dans la console <strong>Utilisateurs et ordinateurs Active Directory</strong>, je crée une arborescence d'unités d'organisation représentative de l'établissement : <code>Salle_BTSSIO</code> → <code>Professeurs</code> et <code>Eleves</code>, puis des utilisateurs dans chacune. Je crée également des groupes de sécurité (<em>Groupe_Professeurs</em>, <em>Groupe_Eleves</em>) et j'y ajoute les membres correspondants. Chaque utilisateur reçoit un mot de passe initial avec l'option <em>« changement au prochain ouverture de session »</em> pour respecter les bonnes pratiques de sécurité.</p>
-            <p class="screens-caption">Captures — création des OU, ajout des utilisateurs, affectation aux groupes (20 captures) :</p>
+            <p>Dans <em>Outils → Utilisateurs et ordinateurs Active Directory</em>, je crée la structure d'annuaire. Je commence par créer les groupes globaux et des <strong>groupes de domaine local (GDL)</strong> pour gérer les permissions sur les partages (<code>GDL_Eleves_EL</code> = écriture/lecture, <code>GDL_Eleves_LS</code> = lecture seule, et même chose pour les formateurs). Je crée ensuite les utilisateurs <em>Élèves</em> et <em>Formateurs</em> avec leurs mots de passe. Les <strong>formateurs</strong> sont membres des deux groupes EL (lecture/écriture sur les deux partages). Les <strong>élèves</strong> ont l'écriture sur leur partage et seulement la lecture sur celui des formateurs. Je crée également des <strong>unités d'organisation (OU)</strong> distinctes pour les Élèves et les Formateurs, et je place chaque utilisateur dans la bonne OU pour faciliter l'application des GPO. Je crée enfin une OU pour les ordinateurs de la salle BTSSIO.</p>
+            <p class="screens-caption">Captures — création des GDL, utilisateurs, ajout aux groupes, OU Élèves/Formateurs (26 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_069.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 1/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_070.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 2/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_071.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 3/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_072.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 4/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_073.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 5/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_074.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 6/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_075.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 7/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_076.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 8/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_077.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 9/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_078.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 10/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_079.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 11/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_080.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 12/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_081.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 13/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_082.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 14/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_083.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 15/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_084.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 16/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_085.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 17/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_086.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 18/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_087.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 19/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_088.png" alt="Création des OU, utilisateurs et groupes Active Directory — capture 20/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_051.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 1/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_052.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 2/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_053.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 3/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_054.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 4/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_055.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 5/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_056.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 6/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_057.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 7/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_058.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 8/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_059.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 9/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_060.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 10/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_061.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 11/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_062.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 12/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_063.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 13/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_064.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 14/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_065.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 15/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_066.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 16/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_067.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 17/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_068.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 18/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_069.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 19/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_070.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 20/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_071.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 21/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_072.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 22/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_073.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 23/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_074.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 24/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_075.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 25/26" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_076.jpg" alt="Création des OU, utilisateurs, groupes (GDL) et partages — 26/26" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape7" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">7</div>
-                <h3 style="margin:0;">Ajout d'un second contrôleur de domaine (Delta)</h3>
+                <h3 style="margin:0;">Ajout du second contrôleur de domaine — Delta</h3>
             </div>
-            <p>Pour la <strong>haute disponibilité</strong>, j'installe un second serveur, <strong>Delta</strong>, dans le <strong>VLAN 200</strong> avec l'IP fixe <code>192.168.200.202</code> (passerelle <code>192.168.200.250</code>, DNS préféré <code>192.168.200.201</code> qui pointe vers Beta). Je le joins au domaine <code>btssio.rd</code> puis je l'élève en DC supplémentaire via l'assistant « Promouvoir ce serveur en contrôleur de domaine » → <em>Ajouter un contrôleur de domaine à un domaine existant</em>. Je coche <strong>DNS</strong> et <strong>catalogue global</strong> de manière à ce que Delta puisse assurer toutes les fonctions en cas de panne de Beta. La réplication AD se met en place automatiquement entre les deux DC.</p>
-            <p class="screens-caption">Captures — jonction au domaine, promotion de Delta, réplication AD (20 captures) :</p>
+            <p>Pour la haute disponibilité, je crée le second serveur <strong>Delta</strong>, je le renomme, je lui attribue son IP fixe <code>192.168.200.202</code> et je fais toutes les mises à jour. Je le joins ensuite au domaine en cliquant sur <em>WORKGROUP</em> et en passant en domaine <code>btssio.rd</code>. Une fois redémarré, j'installe le rôle <strong>AD DS</strong> et je clique sur le drapeau pour <em>Promouvoir ce serveur en contrôleur de domaine</em>, en choisissant cette fois <strong>Ajouter un contrôleur de domaine à un domaine existant</strong>. Je saisis le mot de passe DSRM, je sélectionne le DC à répliquer (Beta), j'installe et je redémarre. Pour vérifier que la promotion s'est bien passée, je lance les commandes de diagnostic AD, je vérifie que les zones DNS inversées sont présentes sur Delta et que les utilisateurs/groupes sont répliqués.</p>
+            <p class="screens-caption">Captures — création de Delta, jonction au domaine, promotion en DC secondaire, vérifications (16 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_089.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 1/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_090.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 2/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_091.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 3/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_092.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 4/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_093.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 5/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_094.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 6/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_095.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 7/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_096.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 8/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_097.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 9/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_098.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 10/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_099.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 11/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_100.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 12/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_101.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 13/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_102.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 14/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_103.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 15/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_104.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 16/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_105.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 17/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_106.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 18/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_107.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 19/20" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_108.png" alt="Ajout d'un second contrôleur de domaine (Delta) — capture 20/20" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_077.jpg" alt="Ajout du second contrôleur de domaine — Delta — 1/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_078.jpg" alt="Ajout du second contrôleur de domaine — Delta — 2/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_079.jpg" alt="Ajout du second contrôleur de domaine — Delta — 3/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_080.jpg" alt="Ajout du second contrôleur de domaine — Delta — 4/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_081.jpg" alt="Ajout du second contrôleur de domaine — Delta — 5/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_082.jpg" alt="Ajout du second contrôleur de domaine — Delta — 6/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_083.jpg" alt="Ajout du second contrôleur de domaine — Delta — 7/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_084.jpg" alt="Ajout du second contrôleur de domaine — Delta — 8/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_085.jpg" alt="Ajout du second contrôleur de domaine — Delta — 9/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_086.jpg" alt="Ajout du second contrôleur de domaine — Delta — 10/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_087.jpg" alt="Ajout du second contrôleur de domaine — Delta — 11/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_088.jpg" alt="Ajout du second contrôleur de domaine — Delta — 12/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_089.jpg" alt="Ajout du second contrôleur de domaine — Delta — 13/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_090.jpg" alt="Ajout du second contrôleur de domaine — Delta — 14/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_091.jpg" alt="Ajout du second contrôleur de domaine — Delta — 15/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_092.jpg" alt="Ajout du second contrôleur de domaine — Delta — 16/16" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape8" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">8</div>
-                <h3 style="margin:0;">Configuration du basculement DHCP (DHCP Failover)</h3>
+                <h3 style="margin:0;">Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta)</h3>
             </div>
-            <p>Sur la console DHCP de Beta, un clic droit sur l'étendue → « Configurer un basculement » permet de mettre en place la <strong>redondance DHCP</strong> avec Delta comme partenaire. Je choisis le mode <strong>Équilibrage de charge</strong> (50 % / 50 %) avec un secret partagé. À la fin de l'assistant, Delta récupère automatiquement la configuration de l'étendue et les deux serveurs se synchronisent. Si l'un tombe, l'autre continue d'attribuer les baux sans interruption pour les postes clients.</p>
-            <p class="screens-caption">Captures — assistant de basculement, mode d'équilibrage, vérification sur Delta (14 captures) :</p>
+            <p>Pour rendre le DHCP redondant, je commence par installer le rôle DHCP sur Delta puis je termine sa configuration via le drapeau. Sur Beta, je fais clic droit sur l'étendue → <em>Configurer un basculement</em>. Je désigne <strong>Delta</strong> comme partenaire et je choisis le mode <strong>Serveur de secours (Hot Standby)</strong> : Beta reste le serveur actif qui distribue les baux, Delta n'intervient qu'en cas de panne. Je laisse l'intervalle par défaut (1 heure de transition d'état) et je définis un <em>secret partagé</em> entre les deux serveurs. Une fois le basculement créé, je vérifie sur Delta que l'étendue est bien présente. Pour valider, j'éteins volontairement Beta et je m'assure que les postes obtiennent quand même leur IP via Delta.</p>
+            <p class="screens-caption">Captures — configuration du basculement, mode Hot Standby, secret partagé, test après extinction de Beta (12 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_109.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 1/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_110.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 2/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_111.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 3/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_112.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 4/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_113.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 5/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_114.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 6/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_115.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 7/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_116.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 8/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_117.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 9/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_118.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 10/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_119.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 11/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_120.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 12/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_121.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 13/14" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_122.png" alt="Configuration du basculement DHCP (DHCP Failover) — capture 14/14" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_093.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 1/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_094.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 2/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_095.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 3/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_096.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 4/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_097.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 5/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_098.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 6/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_099.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 7/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_100.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 8/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_101.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 9/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_102.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 10/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_103.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 11/12" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_104.jpg" alt="Configuration du basculement DHCP en mode Hot Standby (Beta ↔ Delta) — 12/12" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape9" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">9</div>
-                <h3 style="margin:0;">Mise en place des stratégies de groupe (GPO)</h3>
+                <h3 style="margin:0;">Horaires d'accès des comptes et intégration des postes au domaine</h3>
             </div>
-            <p>Dans <strong>Gestion de stratégie de groupe</strong>, je crée des GPO liées aux OU pour appliquer des restrictions et des paramètres : désactivation de l'exécution automatique des supports amovibles, redirection des dossiers, stratégies de mot de passe, fond d'écran verrouillé pour les élèves, refus d'accès au Panneau de configuration, etc. Chaque GPO est d'abord <em>créée</em>, puis <em>éditée</em> (Configuration ordinateur ou utilisateur) et enfin <em>liée</em> à l'OU concernée. Un <code>gpupdate /force</code> sur un poste client permet de vérifier que les paramètres s'appliquent bien.</p>
-            <p class="screens-caption">Captures — création et édition des GPO, liaisons aux OU, paramètres de sécurité (21 captures) :</p>
+            <p>Je gère ensuite les <strong>horaires d'accès</strong> des comptes utilisateurs : par exemple sur le compte <em>Jayden</em>, je fais <em>clic droit → Propriétés → Compte → Horaires d'accès</em> et je définis l'autorisation du lundi au vendredi. Pour tester, je restreins l'accès jusqu'à 15 h alors qu'il est plus tard, et je vérifie que la connexion est refusée. J'intègre ensuite le poste client au domaine en passant par <em>Propriétés système → Modifier → Domaine btssio.rd</em>. Une fois dans le domaine, le PC apparaît dans <em>Computers</em> dans Active Directory et je peux le glisser dans l'OU des ordinateurs de la salle BTSSIO pour qu'il reçoive les bonnes GPO.</p>
+            <p class="screens-caption">Captures — horaires d'accès Jayden, intégration du PC au domaine, déplacement vers l'OU (8 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_123.png" alt="Mise en place des stratégies de groupe (GPO) — capture 1/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_124.png" alt="Mise en place des stratégies de groupe (GPO) — capture 2/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_125.png" alt="Mise en place des stratégies de groupe (GPO) — capture 3/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_126.png" alt="Mise en place des stratégies de groupe (GPO) — capture 4/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_127.png" alt="Mise en place des stratégies de groupe (GPO) — capture 5/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_128.png" alt="Mise en place des stratégies de groupe (GPO) — capture 6/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_129.png" alt="Mise en place des stratégies de groupe (GPO) — capture 7/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_130.png" alt="Mise en place des stratégies de groupe (GPO) — capture 8/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_131.png" alt="Mise en place des stratégies de groupe (GPO) — capture 9/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_132.png" alt="Mise en place des stratégies de groupe (GPO) — capture 10/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_133.png" alt="Mise en place des stratégies de groupe (GPO) — capture 11/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_134.png" alt="Mise en place des stratégies de groupe (GPO) — capture 12/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_135.png" alt="Mise en place des stratégies de groupe (GPO) — capture 13/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_136.png" alt="Mise en place des stratégies de groupe (GPO) — capture 14/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_137.png" alt="Mise en place des stratégies de groupe (GPO) — capture 15/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_138.png" alt="Mise en place des stratégies de groupe (GPO) — capture 16/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_139.png" alt="Mise en place des stratégies de groupe (GPO) — capture 17/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_140.png" alt="Mise en place des stratégies de groupe (GPO) — capture 18/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_141.png" alt="Mise en place des stratégies de groupe (GPO) — capture 19/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_142.png" alt="Mise en place des stratégies de groupe (GPO) — capture 20/21" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_143.png" alt="Mise en place des stratégies de groupe (GPO) — capture 21/21" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_105.jpg" alt="Horaires d'accès des comptes et intégration des postes au domaine — 1/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_106.jpg" alt="Horaires d'accès des comptes et intégration des postes au domaine — 2/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_107.jpg" alt="Horaires d'accès des comptes et intégration des postes au domaine — 3/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_108.jpg" alt="Horaires d'accès des comptes et intégration des postes au domaine — 4/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_109.jpg" alt="Horaires d'accès des comptes et intégration des postes au domaine — 5/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_110.jpg" alt="Horaires d'accès des comptes et intégration des postes au domaine — 6/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_111.jpg" alt="Horaires d'accès des comptes et intégration des postes au domaine — 7/8" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_112.jpg" alt="Horaires d'accès des comptes et intégration des postes au domaine — 8/8" loading="lazy"></figure>
             </div>
         </div>
         <div id="etape10" class="proc-step fade-in">
             <div class="proc-step-header">
                 <div class="proc-step-number">10</div>
-                <h3 style="margin:0;">Tests et vérifications finaux</h3>
+                <h3 style="margin:0;">GPO de sécurité du domaine — mots de passe forts et options de session</h3>
             </div>
-            <p>Pour valider l'infrastructure, j'effectue une série de tests depuis un poste client situé dans le <strong>VLAN 201</strong> : jonction du poste Windows 10 au domaine <code>btssio.rd</code>, ouverture de session avec un utilisateur AD, vérification que les GPO s'appliquent, obtention d'une adresse IP via DHCP. Une commande <code>ipconfig /all</code> sur le poste <strong>ZET-01</strong> confirme la cohérence complète de la configuration : suffixe DNS <code>BTSSIO.RD</code>, adresse IPv4 <code>192.168.201.202</code> (la réservation DHCP est bien appliquée à la MAC <code>74-56-3C-0F-2A-CE</code>), passerelle <code>192.168.201.250</code>, serveur DHCP <code>192.168.200.201</code> (Beta) et serveurs DNS <code>192.168.200.201</code> + <code>192.168.200.202</code> (Beta + Delta). Je teste aussi la résolution DNS directe et inverse (<code>nslookup beta.btssio.rd</code>, <code>nslookup 192.168.200.201</code>), j'éteins volontairement Beta pour vérifier que Delta prend le relais (DHCP + authentification) sans interruption pour les clients, puis je contrôle la réplication AD avec <code>repadmin /replsummary</code>.</p>
-            <p class="screens-caption">Captures — jonction d'un client, tests DNS/DHCP, bascule sur Delta, réplication (11 captures) :</p>
+            <p>Avant de créer les GPO, je renforce d'abord la <strong>politique de mots de passe</strong> via <em>Centre d'administration AD → BTSSIO (local) → Système → Password Settings Container</em> (recommandation ANSSI : longueur, complexité, expiration). Je crée ensuite une GPO globale de sécurité que je modifie pour appliquer plusieurs paramètres dans <em>Configuration ordinateur → Stratégies → Paramètres Windows → Paramètres de sécurité → Stratégies locales → Options de sécurité</em> : <strong>verrouillage de session</strong>, <strong>message d'avertissement à la connexion</strong>, <strong>désactivation du compte invité</strong>, <strong>audit des connexions</strong>, <strong>interdiction de stocker les hachages LM</strong> et <strong>renommage du compte administrateur</strong>. Chaque paramètre est testé après application.</p>
+            <p class="screens-caption">Captures — Password Settings Container, GPO sécurité, paramètres et tests (16 captures, dans l'ordre du document) :</p>
             <div class="proc-screens">
-                <figure class="proc-screen"><img src="assets/projets/ad/png_144.png" alt="Tests et vérifications finaux — capture 1/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_145.png" alt="Tests et vérifications finaux — capture 2/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_146.png" alt="Tests et vérifications finaux — capture 3/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_147.png" alt="Tests et vérifications finaux — capture 4/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_148.png" alt="Tests et vérifications finaux — capture 5/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_149.png" alt="Tests et vérifications finaux — capture 6/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_150.png" alt="Tests et vérifications finaux — capture 7/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_151.png" alt="Tests et vérifications finaux — capture 8/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_152.png" alt="Tests et vérifications finaux — capture 9/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/png_153.png" alt="Tests et vérifications finaux — capture 10/11" loading="lazy"></figure>
-                <figure class="proc-screen"><img src="assets/projets/ad/jpg_000.jpg" alt="Tests et vérifications finaux — capture 11/11" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_113.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 1/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_114.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 2/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_115.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 3/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_116.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 4/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_117.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 5/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_118.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 6/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_119.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 7/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_120.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 8/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_121.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 9/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_122.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 10/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_123.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 11/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_124.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 12/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_125.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 13/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_126.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 14/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_127.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 15/16" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_128.jpg" alt="GPO de sécurité du domaine — mots de passe forts et options de session — 16/16" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape11" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">11</div>
+                <h3 style="margin:0;">GPO utilisateurs — blocage du Panneau de configuration, CMD et PowerShell</h3>
+            </div>
+            <p>Je crée ensuite une GPO destinée aux utilisateurs (élèves notamment) pour limiter ce qu'ils peuvent faire sur les postes. Dans <em>Configuration utilisateur → Stratégies → Modèles d'administration</em>, je configure : <strong>Bloquer le Panneau de configuration</strong>, <strong>Bloquer l'invite de commandes (CMD)</strong> via <em>Système → Empêcher l'accès à l'invite de commandes</em>, et <strong>Bloquer PowerShell</strong> via <em>Système → Ne pas exécuter d'applications Windows</em> en ajoutant <code>powershell.exe</code> et <code>powershell_ise.exe</code> à la liste.</p>
+            <p class="screens-caption">Captures — GPO utilisateurs, blocage Panneau / CMD / PowerShell (5 captures, dans l'ordre du document) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/page_129.jpg" alt="GPO utilisateurs — blocage du Panneau de configuration, CMD et PowerShell — 1/5" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_130.jpg" alt="GPO utilisateurs — blocage du Panneau de configuration, CMD et PowerShell — 2/5" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_131.jpg" alt="GPO utilisateurs — blocage du Panneau de configuration, CMD et PowerShell — 3/5" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_132.jpg" alt="GPO utilisateurs — blocage du Panneau de configuration, CMD et PowerShell — 4/5" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_133.jpg" alt="GPO utilisateurs — blocage du Panneau de configuration, CMD et PowerShell — 5/5" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape12" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">12</div>
+                <h3 style="margin:0;">GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique</h3>
+            </div>
+            <p>Pour les ordinateurs, je crée une autre GPO qui durcit la configuration des postes : <strong>activation du Pare-feu Windows</strong> dans <em>Configuration ordinateur → Stratégies → Paramètres Windows → Paramètres de sécurité → Pare-feu Windows Defender</em>, <strong>configuration automatique de Windows Update</strong> via <em>Modèles d'administration → Composants Windows → Windows Update</em> (option 4 = téléchargement et planification de l'installation), <strong>désactivation du stockage USB</strong> (<em>Système → Accès au stockage amovible → Refuser accès en lecture/écriture</em>) et <strong>désactivation de l'exécution automatique</strong> (<em>Composants Windows → Stratégies d'exécution automatique → Désactiver l'exécution automatique</em>). Tests sur poste : la clé USB n'ouvre plus de dossier automatiquement, le pare-feu est actif, et Windows Update est bien planifié.</p>
+            <p class="screens-caption">Captures — GPO ordinateurs, pare-feu, Windows Update, blocage USB, autorun (13 captures, dans l'ordre du document) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/page_134.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 1/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_135.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 2/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_136.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 3/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_137.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 4/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_138.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 5/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_139.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 6/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_140.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 7/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_141.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 8/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_142.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 9/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_143.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 10/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_144.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 11/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_145.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 12/13" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_146.jpg" alt="GPO ordinateurs — pare-feu, Windows Update, USB, exécution automatique — 13/13" loading="lazy"></figure>
+            </div>
+        </div>
+        <div id="etape13" class="proc-step fade-in">
+            <div class="proc-step-header">
+                <div class="proc-step-number">13</div>
+                <h3 style="margin:0;">GPO de déploiement de l'agent GLPI</h3>
+            </div>
+            <p>Pour automatiser l'inventaire de parc, je déploie l'agent <strong>GLPI</strong> via une GPO. Je copie d'abord le fichier <code>.MSI</code> de l'agent dans un partage déjà présent par défaut sur le DC : <code>\\BTSSIO.RD\NETLOGON</code>. Je modifie ensuite la GPO ordinateur pour ajouter une <strong>installation de logiciel attribuée</strong> pointant sur le MSI. Pour que l'agent connaisse l'URL du serveur GLPI, j'ajoute une <strong>clé de registre</strong> via les <em>Préférences → Paramètres Windows → Registre</em> de la même GPO. Sur un poste client, je lance <code>gpupdate /force</code> puis je redémarre : l'agent s'installe et l'ordinateur remonte ensuite automatiquement dans la console GLPI.</p>
+            <p class="screens-caption">Captures — copie du MSI dans NETLOGON, GPO d'installation, clé de registre, vérification dans GLPI (7 captures, dans l'ordre du document) :</p>
+            <div class="proc-screens">
+                <figure class="proc-screen"><img src="assets/projets/ad/page_147.jpg" alt="GPO de déploiement de l'agent GLPI — 1/7" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_148.jpg" alt="GPO de déploiement de l'agent GLPI — 2/7" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_149.jpg" alt="GPO de déploiement de l'agent GLPI — 3/7" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_150.jpg" alt="GPO de déploiement de l'agent GLPI — 4/7" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_151.jpg" alt="GPO de déploiement de l'agent GLPI — 5/7" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_152.jpg" alt="GPO de déploiement de l'agent GLPI — 6/7" loading="lazy"></figure>
+                <figure class="proc-screen"><img src="assets/projets/ad/page_153.jpg" alt="GPO de déploiement de l'agent GLPI — 7/7" loading="lazy"></figure>
             </div>
         </div>
 
-        <!-- BILAN -->
         <div id="bilan" class="content-block fade-in">
             <h3>Bilan et compétences mobilisées</h3>
             <p>
                 Ce projet m'a permis de mettre en œuvre de bout en bout une infrastructure Active Directory
-                réaliste, du poste vierge à la console de supervision. J'ai notamment consolidé les compétences
-                suivantes, directement rattachées au référentiel BTS SIO SISR :
+                réaliste, du poste vierge à la console de supervision GLPI. J'ai notamment consolidé les
+                compétences suivantes du référentiel BTS SIO SISR :
             </p>
             <ul>
                 <li><strong>Installer, configurer et administrer un service</strong> (AD DS, DNS, DHCP) sur Windows Server.</li>
-                <li><strong>Assurer la disponibilité</strong> d'un service d'annuaire et d'un service DHCP par redondance.</li>
-                <li><strong>Gérer les identités et les accès</strong> via des OU, utilisateurs et groupes AD.</li>
-                <li><strong>Déployer et centraliser</strong> les paramètres via les stratégies de groupe (GPO).</li>
+                <li><strong>Assurer la disponibilité</strong> d'un service d'annuaire et d'un service DHCP par redondance (Hot Standby).</li>
+                <li><strong>Gérer les identités et les accès</strong> via des OU, utilisateurs, groupes globaux et groupes de domaine local (GDL).</li>
+                <li><strong>Définir et déployer des stratégies de sécurité</strong> via les GPO (mots de passe, restrictions utilisateurs, durcissement ordinateur).</li>
+                <li><strong>Automatiser le déploiement de logiciels</strong> via une GPO d'installation MSI (agent GLPI).</li>
                 <li><strong>Documenter une infrastructure</strong> et tracer la configuration en vue d'une reprise d'exploitation.</li>
             </ul>
             <p>
                 Les tests finaux ont validé la cohérence de l'ensemble : résolution DNS bidirectionnelle, obtention
-                d'IP via DHCP, authentification AD, application des GPO, réplication entre Beta et Delta et
-                basculement automatique lors de l'arrêt volontaire d'un contrôleur.
+                d'IP via DHCP avec réservation MAC fonctionnelle, authentification AD, application des GPO
+                (utilisateurs et ordinateurs), déploiement automatique de l'agent GLPI, réplication entre Beta et
+                Delta, et basculement automatique lors de l'arrêt volontaire d'un contrôleur.
             </p>
             <a href="epreuve6.html" class="back-link">← Retour aux projets de l'épreuve E6</a>
         </div>
@@ -504,7 +491,6 @@
     </div>
 </section>
 
-<!-- Lightbox pour les captures -->
 <div id="proc-lightbox" class="proc-lightbox" aria-hidden="true">
     <button class="proc-lightbox-close" aria-label="Fermer">&times;</button>
     <img id="proc-lightbox-img" src="" alt="">
