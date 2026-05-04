@@ -135,27 +135,174 @@ document.addEventListener('keydown', (e) => {
 window.addEventListener('resize', closeLogoPopover);
 window.addEventListener('scroll', closeLogoPopover, { passive: true });
 
-/* ---------- Lightbox pour les captures de procédures ---------- */
+/* ---------- Lightbox zoomable pour captures et schémas ---------- */
 const procLightbox = document.getElementById('proc-lightbox');
 const procLightboxImg = document.getElementById('proc-lightbox-img');
 const procLightboxClose = document.querySelector('.proc-lightbox-close');
 
+let lbScale = 1;        // échelle courante (1 = pixels natifs de l'image)
+let lbFitScale = 1;     // échelle qui fait pile rentrer l'image dans l'écran
+let lbMinScale = 1;     // = lbFitScale
+let lbMaxScale = 8;     // borne haute (recalculée en fonction de l'image)
+let lbTx = 0;
+let lbTy = 0;
+let lbDragging = false;
+let lbDragStart = { x: 0, y: 0, tx: 0, ty: 0 };
+
+function lbCalculateFitScale() {
+    if (!procLightboxImg || !procLightboxImg.naturalWidth) return 1;
+    const fitW = (window.innerWidth * 0.95) / procLightboxImg.naturalWidth;
+    const fitH = (window.innerHeight * 0.95) / procLightboxImg.naturalHeight;
+    return Math.min(fitW, fitH, 1);  // jamais d'agrandissement initial au-dessus de 1×
+}
+
+function lbApplyTransform() {
+    if (!procLightboxImg) return;
+    // .zoomed = on est au-dessus de la taille initiale ajustée → curseur "grab"
+    if (lbScale > lbFitScale * 1.001) {
+        procLightboxImg.classList.add('zoomed');
+    } else {
+        procLightboxImg.classList.remove('zoomed');
+    }
+    procLightboxImg.style.transform =
+        `translate(calc(-50% + ${lbTx}px), calc(-50% + ${lbTy}px)) scale(${lbScale})`;
+}
+
+// Active une transition douce pour une action volontaire (touches +/-/0, double-clic)
+function lbWithSmooth(callback) {
+    if (!procLightboxImg) { callback(); return; }
+    procLightboxImg.classList.add('smooth');
+    callback();
+    setTimeout(() => procLightboxImg.classList.remove('smooth'), 220);
+}
+
+function lbResetZoom(smooth) {
+    const action = () => {
+        lbScale = lbFitScale;
+        lbTx = 0;
+        lbTy = 0;
+        lbApplyTransform();
+    };
+    if (smooth) lbWithSmooth(action);
+    else action();
+}
+
+function lbZoomBy(factor, cx, cy) {
+    const newScale = Math.min(Math.max(lbScale * factor, lbMinScale), lbMaxScale);
+    if (newScale === lbScale) return;
+    // Le centre de l'image en viewport est à (W/2 + tx, H/2 + ty)
+    const cxImg = window.innerWidth / 2 + lbTx;
+    const cyImg = window.innerHeight / 2 + lbTy;
+    // Point sous le curseur en coordonnées image (avant échelle)
+    const px = (cx - cxImg) / lbScale;
+    const py = (cy - cyImg) / lbScale;
+    // Réajustement pour que le même point reste sous le curseur après zoom
+    lbTx = cx - window.innerWidth / 2 - px * newScale;
+    lbTy = cy - window.innerHeight / 2 - py * newScale;
+    lbScale = newScale;
+    lbApplyTransform();
+}
+
+function lbInitialiseImage() {
+    lbFitScale = lbCalculateFitScale();
+    lbMinScale = lbFitScale;
+    // Borne haute : on permet au minimum 100 % (pixels natifs), ou jusqu'à 10× le fit pour les petites images
+    lbMaxScale = Math.max(1, lbFitScale * 10);
+    lbResetZoom();
+}
+
 function openProcLightbox(src, alt) {
     if (!procLightbox || !procLightboxImg) return;
+    procLightboxImg.classList.remove('zoomed', 'smooth');
     procLightboxImg.src = src;
     procLightboxImg.alt = alt || '';
     procLightbox.classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    if (procLightboxImg.complete && procLightboxImg.naturalWidth > 0) {
+        lbInitialiseImage();
+    } else {
+        procLightboxImg.onload = () => lbInitialiseImage();
+    }
 }
+
 function closeProcLightbox() {
     if (!procLightbox) return;
     procLightbox.classList.remove('open');
     document.body.style.overflow = '';
+    lbResetZoom();
 }
 
 document.querySelectorAll('.proc-screen img').forEach(img => {
     img.addEventListener('click', () => openProcLightbox(img.src, img.alt));
 });
-if (procLightbox) procLightbox.addEventListener('click', closeProcLightbox);
-if (procLightboxClose) procLightboxClose.addEventListener('click', (e) => { e.stopPropagation(); closeProcLightbox(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProcLightbox(); });
+
+if (procLightboxClose) {
+    procLightboxClose.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeProcLightbox();
+    });
+}
+
+if (procLightbox) {
+    // Clic sur le fond (pas sur l'image) ferme la lightbox
+    procLightbox.addEventListener('click', (e) => {
+        if (e.target === procLightbox) closeProcLightbox();
+    });
+
+    // Zoom à la molette — exponentiel, plafonné, pour un ressenti fluide et progressif
+    procLightbox.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        // On borne deltaY pour neutraliser les pics anormaux (certaines souris/tactiles envoient ±300 ou ±500)
+        const clamped = Math.max(-100, Math.min(100, e.deltaY));
+        // 0.0007 donne ~7 % de zoom par tic standard de molette — doux et précis
+        const factor = Math.exp(-clamped * 0.0007);
+        lbZoomBy(factor, e.clientX, e.clientY);
+    }, { passive: false });
+
+    // Glisser-déposer pour panoramiquer (uniquement quand on dépasse la taille initiale ajustée)
+    procLightboxImg.addEventListener('mousedown', (e) => {
+        if (lbScale <= lbFitScale * 1.001) return;
+        lbDragging = true;
+        lbDragStart = { x: e.clientX, y: e.clientY, tx: lbTx, ty: lbTy };
+        procLightbox.classList.add('grabbing');
+        e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e) => {
+        if (!lbDragging) return;
+        lbTx = lbDragStart.tx + (e.clientX - lbDragStart.x);
+        lbTy = lbDragStart.ty + (e.clientY - lbDragStart.y);
+        lbApplyTransform();
+    });
+    document.addEventListener('mouseup', () => {
+        lbDragging = false;
+        if (procLightbox) procLightbox.classList.remove('grabbing');
+    });
+
+    // Double-clic = zoom 2× sur le curseur, ou reset si déjà zoomé (avec transition douce)
+    procLightboxImg.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        if (lbScale > 1.001) {
+            lbResetZoom(true);
+        } else {
+            lbWithSmooth(() => lbZoomBy(2.5, e.clientX, e.clientY));
+        }
+    });
+}
+
+// Raccourcis clavier (avec transition douce)
+document.addEventListener('keydown', (e) => {
+    if (!procLightbox || !procLightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') {
+        closeProcLightbox();
+    } else if (e.key === '+' || e.key === '=') {
+        e.preventDefault();
+        lbWithSmooth(() => lbZoomBy(1.25, window.innerWidth / 2, window.innerHeight / 2));
+    } else if (e.key === '-' || e.key === '_') {
+        e.preventDefault();
+        lbWithSmooth(() => lbZoomBy(0.8, window.innerWidth / 2, window.innerHeight / 2));
+    } else if (e.key === '0') {
+        e.preventDefault();
+        lbResetZoom(true);
+    }
+});

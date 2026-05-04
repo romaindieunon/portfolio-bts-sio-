@@ -1328,24 +1328,59 @@ tr:hover td {
     padding: 0 0.25rem;
     line-height: 1.4;
 }
-/* Lightbox */
+/* Mise en valeur des serveurs ciblés par le projet */
+.focus-server {
+    background: linear-gradient(90deg, rgba(14,165,233,0.15), rgba(14,165,233,0.05));
+    border-left: 4px solid var(--primary);
+    padding: 0.6rem 0.85rem;
+    margin: 0.25rem 0;
+    border-radius: 6px;
+    list-style: none;
+    position: relative;
+}
+.focus-server::before {
+    content: "★";
+    color: var(--primary);
+    margin-right: 0.4rem;
+    font-weight: 700;
+}
+.focus-server-list { padding-left: 0; }
+
+/* Lightbox zoomable (molette + drag + double-clic) */
 .proc-lightbox {
     position: fixed;
     inset: 0;
     background: rgba(15, 23, 42, 0.92);
     display: none;
-    align-items: center;
-    justify-content: center;
     z-index: 1000;
-    padding: 2rem;
+    overflow: hidden;
     cursor: zoom-out;
+    touch-action: none;
 }
-.proc-lightbox.open { display: flex; }
+.proc-lightbox.open { display: block; }
+.proc-lightbox.grabbing { cursor: grabbing; }
 .proc-lightbox img {
-    max-width: 95%;
-    max-height: 95%;
-    border-radius: 8px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    transform-origin: center;
+    transition: none;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    user-select: none;
+    -webkit-user-drag: none;
+    cursor: zoom-in;
+    will-change: transform;
+}
+.proc-lightbox img.smooth {
+    transition: transform 0.2s ease-out;
+}
+.proc-lightbox img.zoomed {
+    cursor: grab;
+}
+.proc-lightbox.grabbing img,
+.proc-lightbox.grabbing img.zoomed {
+    cursor: grabbing;
 }
 .proc-lightbox-close {
     position: absolute;
@@ -1360,8 +1395,32 @@ tr:hover td {
     font-size: 1.5rem;
     cursor: pointer;
     line-height: 1;
+    z-index: 10;
 }
 .proc-lightbox-close:hover { background: rgba(255,255,255,0.3); }
+.proc-lightbox::after {
+    content: "Molette = zoom · Glisser = déplacer · Double-clic = zoom max / reset · Échap = fermer";
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.7);
+    font-size: 0.8rem;
+    background: rgba(0,0,0,0.45);
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 5;
+    white-space: nowrap;
+}
+@media (max-width: 700px) {
+    .proc-lightbox::after {
+        font-size: 0.7rem;
+        white-space: normal;
+        text-align: center;
+        max-width: 90vw;
+    }
+}
 @media (max-width: 640px) {
     .proc-screen img { height: 180px; }
     .proc-screens { grid-template-columns: 1fr; }
